@@ -1,12 +1,12 @@
 import * as React from "react";
 
 type LogoProps = React.ComponentProps<"span"> & {
-  svgClassName?: React.ComponentProps<'svg'>['className'];
+  svgClassName?: React.ComponentProps<"svg">["className"];
 };
 
-export function Logo({svgClassName,  ...props }: LogoProps) {
+export function Logo({ svgClassName, ...props }: LogoProps) {
   return (
-    <strong className="flex items-center gap-2.5">
+    <strong className="flex  items-center gap-2.5">
       <svg
         width={43}
         height={43}

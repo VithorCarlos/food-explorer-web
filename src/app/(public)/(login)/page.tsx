@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import * as Input from "@/Components/Input";
 
-export default function Home() {
+export default function Login() {
   const router = useRouter();
 
   const handleRedirect = () => {
@@ -19,10 +19,13 @@ export default function Home() {
         Cardápio digital para consumir os melhores petiscos
       </p>
 
-      <div className="flex  h-screen flex-col items-center justify-center gap-[4.375rem]">
-        <Logo className="text-4xl" />
-        
-        <form className="flex w-full flex-col items-center space-y-8 px-10">
+      <div className="mx-auto flex h-screen max-w-6xl flex-col items-center justify-center gap-[4.375rem] lg:flex-row lg:gap-36 lg:px-8 xl:gap-72">
+        <Logo className="text-4xl lg:w-80" />
+
+        <form className="flex w-full flex-col items-center space-y-8 rounded-2xl px-10 lg:bg-dark_700 lg:px-16 lg:py-16">
+          <h2 className="sr-only text-3xl font-medium text-light_200 lg:not-sr-only">
+            Faça login
+          </h2>
           <Input.Root>
             <Input.Label title="Email" htmlFor="email" />
             <Input.Viewport>
@@ -45,7 +48,9 @@ export default function Home() {
             </Input.Viewport>
           </Input.Root>
 
-          <Button type="button" onClick={handleRedirect} title="Entrar" />
+          <Button type="button" onClick={handleRedirect}>
+            Entrar
+          </Button>
 
           <Link href="/new-account" className="text-sm">
             Criar conta

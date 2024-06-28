@@ -1,19 +1,32 @@
 import type { Config } from "tailwindcss";
 
 const config: Config = {
-  content: [
-    "./src/**/*.tsx",
-  ],
+  content: ["./src/**/*.tsx"],
   theme: {
-
     extend: {
       height: {
-        4.5: '1.125rem'
+        4.5: "1.125rem",
       },
-     
+
+      animation: {
+        jump: 'jump 0.2s ease',
+      },
+
+      keyframes: {
+        jump: {
+          "0%": { transform: "scale(1)" },
+          "50%": {
+            transform: "scale(1.1)",
+          },
+          "100%": {
+            transform: "scale(1)",
+          },
+        },
+      },
+
       colors: {
-        linear_200: 'rgb(9,30,38, 100%)',
-        linear_100: 'rgb(0,10,15, 27.25%)',
+        linear_200: "rgb(9,30,38, 100%)",
+        linear_100: "rgb(0,10,15, 27.25%)",
 
         dark_950: "#192227",
         dark_900: "#0D1D25",
@@ -40,12 +53,12 @@ const config: Config = {
         carrot_100: "#FBA94C",
         mint_100: "#04D361",
         cake_200: "#82F3FF",
-        cake_100: "#065E7C"
+        cake_100: "#065E7C",
       },
       fontFamily: {
-        poppins: 'var(--font-poppins)',
-        roboto: 'var(--font-roboto)'
-      }
+        poppins: "var(--font-poppins)",
+        roboto: "var(--font-roboto)",
+      },
     },
   },
   plugins: [],
