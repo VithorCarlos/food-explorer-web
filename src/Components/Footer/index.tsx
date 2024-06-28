@@ -1,14 +1,19 @@
 import { Logo } from "../Logo";
 
-export interface FooterProps {}
-
-export function Footer(props: FooterProps) {
+export function Footer() {
+  const actualYear = new Date().getFullYear();
   return (
-    <div className="bg-dark_600 flex flex-1 items-center justify-center gap-4 px-6 py-7 text-xs">
-      <Logo svgClassName="w-5" className="fill-light_700 text-light_700 " />
-      <span className=" ">
-        © 2024 - Todos os direitos reservados.
-      </span>
-    </div>
+    <footer className="bg-dark_600 px-6 py-7 text-xs">
+      <div className="mx-auto flex max-w-6xl flex-1 items-center justify-center gap-4 lg:justify-between">
+        <Logo
+          svgClassName="w-5 lg:w-8"
+          className="fill-light_700 text-light_700 lg:text-2xl"
+        />
+        <span className="lg-text-base block">
+          © {actualYear} - Criado por: Vithor Carlos - Todos os direitos
+          reservados.
+        </span>
+      </div>
+    </footer>
   );
 }

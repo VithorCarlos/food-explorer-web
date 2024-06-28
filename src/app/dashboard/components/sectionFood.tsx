@@ -48,13 +48,13 @@ export function SectionFood({ title, data, ...props }: SectionFoodProps) {
 
   const scrollLeft = () => {
     if (scrollRef.current) {
-      scrollRef.current.scrollBy({ left: -200, behavior: "smooth" });
+      scrollRef.current.scrollBy({ left: -250, behavior: "smooth" });
     }
   };
 
   const scrollRight = () => {
     if (scrollRef.current) {
-      scrollRef.current.scrollBy({ left: 200, behavior: "smooth" });
+      scrollRef.current.scrollBy({ left: 250, behavior: "smooth" });
     }
   };
 
@@ -99,6 +99,7 @@ export function SectionFood({ title, data, ...props }: SectionFoodProps) {
             "lg:after:w-64 lg:after:bg-gradient-to-r lg:after:from-[rgba(0,10,15,0.8)] lg:after:to-[rgba(0,10,15,0.27)]",
             "lg:before:absolute lg:before:right-0 lg:before:top-0 lg:before:z-10 lg:before:block lg:before:h-full lg:before:content-['']",
             "lg:before:w-64 lg:before:bg-gradient-to-l lg:before:from-[rgba(0,10,15,0.8)] lg:before:to-[rgba(0,10,15,0.27)]",
+            !showRightButton && "lg:before:sr-only",
           )}
         >
           {!!data &&
