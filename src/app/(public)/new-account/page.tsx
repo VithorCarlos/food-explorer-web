@@ -1,6 +1,6 @@
-import { Button } from "@/Components/Button";
-import * as Input from "@/Components/Input";
-import { Logo } from "@/Components/Logo";
+import { Button } from "@/components/Button";
+import * as Input from "@/components/Input";
+import { Logo } from "@/components/Logo";
 import Link from "next/link";
 
 export default function NewAccount() {

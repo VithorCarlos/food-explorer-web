@@ -1,9 +1,9 @@
 "use client";
-import { Button } from "@/Components/Button";
-import { Logo } from "@/Components/Logo";
+import { Button } from "@/components/Button";
+import { Logo } from "@/components/Logo";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import * as Input from "@/Components/Input";
+import * as Input from "@/components/Input";
 
 export default function Login() {
   const router = useRouter();
