@@ -4,7 +4,7 @@ type LogoProps = React.ComponentProps<"span"> & {
   svgClassName?: React.ComponentProps<"svg">["className"];
 };
 
-export function Logo({ svgClassName, ...props }: LogoProps) {
+export function ExplorerLogo({ svgClassName, ...props }: LogoProps) {
   return (
     <strong className="flex  items-center gap-2.5">
       <svg

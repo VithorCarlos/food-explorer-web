@@ -1,21 +1,18 @@
 "use client";
 
-import { Button } from "@/components/Button";
-import { FoodProps } from "@/dto/food.dto";
-import {
-  ArrowLeft,
-  ChevronLeft,
-  ChevronRight,
-  Heart,
-  Minus,
-  Plus,
-} from "lucide-react";
+import { Button } from "@/components/button";
+import { ButtonQuantity } from "@/components/button-quantity";
+import { FoodPropsDTO } from "@/dto/food.dto";
+import { formatCurrency } from "@/utils/fomart-curency";
+import { shortDescription } from "@/utils/short-description";
+import { ChevronLeft, ChevronRight, Heart, Minus, Plus } from "lucide-react";
+import Link from "next/link";
 import { ComponentProps, useEffect, useRef, useState } from "react";
-import { twMerge } from "tailwind-merge";
 import { tv } from "tailwind-variants";
+import { Currency } from "../../../components/currency";
 
 export interface SectionFoodProps extends ComponentProps<"section"> {
-  data: FoodProps[];
+  data: FoodPropsDTO[];
   title: string;
 }
 
@@ -36,12 +33,12 @@ export function SectionFood({ title, data, ...props }: SectionFoodProps) {
   const [showLeftButton, setShowLeftButton] = useState(false);
   const [showRightButton, setShowRightButton] = useState(true);
 
-  const handleSaveFavorite = (foodName: string) => {
+  const handleSaveFavorite = (title: string) => {
     setFavorites((prevFavorites) => {
-      if (prevFavorites.includes(foodName)) {
-        return prevFavorites.filter((name) => name !== foodName);
+      if (prevFavorites.includes(title)) {
+        return prevFavorites.filter((name) => name !== title);
       } else {
-        return [...prevFavorites, foodName];
+        return [...prevFavorites, title];
       }
     });
   };
@@ -93,50 +90,47 @@ export function SectionFood({ title, data, ...props }: SectionFoodProps) {
         )}
         <div
           ref={scrollRef}
-          className={twMerge(
-            "no-scrollbar relative flex flex-grow gap-4 overflow-x-auto",
-            "lg:after:absolute lg:after:left-0 lg:after:top-0 lg:after:z-10 lg:after:block lg:after:h-full lg:after:content-['']",
-            "lg:after:w-64 lg:after:bg-gradient-to-r lg:after:from-[rgba(0,10,15,0.8)] lg:after:to-[rgba(0,10,15,0.27)]",
-            "lg:before:absolute lg:before:right-0 lg:before:top-0 lg:before:z-10 lg:before:block lg:before:h-full lg:before:content-['']",
-            "lg:before:w-64 lg:before:bg-gradient-to-l lg:before:from-[rgba(0,10,15,0.8)] lg:before:to-[rgba(0,10,15,0.27)]",
-            !showRightButton && "lg:before:sr-only",
-          )}
+          className="no-scrollbar relative flex flex-grow gap-4 overflow-x-auto"
         >
           {!!data &&
             data.map((food) => (
               <div
-                key={food.foodName}
+                key={food.title}
                 className="relative flex min-w-52 flex-col items-center justify-center gap-3 rounded border border-dark_300 bg-dark_200 p-6"
               >
-                <button onClick={() => handleSaveFavorite(food.foodName)}>
+                <button onClick={() => handleSaveFavorite(food.id)}>
                   <Heart
-                    data-favorited={favorites.includes(food.foodName)}
+                    data-favorited={favorites.includes(food.id)}
                     className={heart({
-                      color: favorites.includes(food.foodName)
-                        ? "marked"
-                        : "default",
-                      className: "",
+                      color: favorites.includes(food.id) ? "marked" : "default",
                     })}
                   />
                 </button>
 
-                <img src={food.imageUrl} alt={food.foodName} />
+                <Link
+                  className="h-24 w-24 lg:h-44 lg:w-44"
+                  href={`/dashboard/${food.id}`}
+                >
+                  <img
+                    className="h-full w-full rounded-full object-cover"
+                    src={food.imageUrl}
+                    alt={food.title}
+                  />
+                </Link>
 
-                <span className="flex items-center justify-center gap-1 text-sm">
-                  {food.foodName} <ChevronRight className="w-4" />
-                </span>
+                <Link href={`/dashboard/${food.id}`}>
+                  <span className="flex items-center justify-center gap-1 text-sm">
+                    {food.title} <ChevronRight className="w-4" />
+                  </span>
+                </Link>
 
-                <span className="text-cake_200">R$ {food.price}</span>
+                <p className="w-full text-center text-sm text-light_400">
+                  {shortDescription(food.description)}
+                </p>
 
-                <div className="mb-1 flex items-center justify-center gap-3.5">
-                  <button>
-                    <Minus />
-                  </button>
-                  <span>{food.qtd}</span>
-                  <button>
-                    <Plus />
-                  </button>
-                </div>
+                <Currency id={food.id} price={food?.price!} color="cake_200" />
+
+                <ButtonQuantity id={food.id} />
 
                 <Button>Incluir</Button>
               </div>

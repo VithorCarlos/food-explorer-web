@@ -5,7 +5,7 @@ type InputViewportProps = ComponentProps<"div">;
 export function Viewport(props: InputViewportProps) {
   return (
     <div
-      className="bg-dark_900 flex items-center px-3.5  py-3.5 gap-3.5 rounded"
+      className="group flex items-center gap-3.5 rounded bg-dark_900 pl-3.5"
       {...props}
     />
   );

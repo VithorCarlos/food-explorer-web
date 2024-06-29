@@ -1,6 +1,6 @@
-import { Button } from "@/components/Button";
-import * as Input from "@/components/Input";
-import { Logo } from "@/components/Logo";
+import { Button } from "@/components/button";
+import { ExplorerLogo } from "@/components/explorer-logo";
+import * as Input from "@/components/input";
 import Link from "next/link";
 
 export default function NewAccount() {
@@ -10,7 +10,7 @@ export default function NewAccount() {
       <p className="sr-only">Crie sua conta em nosso Cardápio digital</p>
 
       <div className="mx-auto flex h-screen max-w-6xl flex-col items-center justify-center gap-[4.375rem] lg:flex-row lg:gap-36  lg:px-8 xl:gap-72">
-        <Logo className="text-4xl lg:w-80" />
+        <ExplorerLogo className="text-4xl lg:w-80" />
 
         <form
           action=""

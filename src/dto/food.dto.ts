@@ -1,6 +1,12 @@
-export interface FoodProps {
-  foodName: string;
+export interface FoodPropsDTO {
+  id: string;
+  title: string;
+  description: string;
   price: number;
-  qtd: number;
   imageUrl: string;
+}
+
+export interface TagsPropsDTO {
+  id: string;
+  title: string;
 }

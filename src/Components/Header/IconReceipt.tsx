@@ -1,19 +1,13 @@
 import * as React from "react";
 
-interface Props extends React.ComponentProps<'div'> {
-  count: number
+interface Props extends React.ComponentProps<"div"> {
+  count?: number;
 }
 
-export function IconReceipt({count = 0, ...props}: Props) {
+export function IconReceipt({ count, ...props }: Props) {
   return (
-    <div  {...props}>
-      <svg
-        width={33}
-        height={32}
-        viewBox="0 0 33 32"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
+    <div {...props}>
+      <svg viewBox="0 0 33 32" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path
           fillRule="evenodd"
           clipRule="evenodd"
@@ -27,9 +21,11 @@ export function IconReceipt({count = 0, ...props}: Props) {
           fill="#fff"
         />
       </svg>
-      <div className="flex items-center min-w-5 min-h-5 justify-center rounded-full bg-tomato_100 absolute -right-3  -top-1">
-        <span className="text-sm font-medium">{count}</span>
-      </div>
+      {count && (
+        <div className="absolute -right-3 -top-1 flex min-h-5 min-w-5 items-center justify-center rounded-full  bg-tomato_100">
+          <span className="text-sm font-medium">{count}</span>
+        </div>
+      )}
     </div>
   );
 }

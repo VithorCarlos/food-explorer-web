@@ -1,46 +1,7 @@
-import { FoodProps } from "@/dto/food.dto";
-import { SectionFood } from "./components/sectionFood";
+import { SectionFood } from "./components/section-food";
+import { foodData } from "@/utils/mock";
 
 export default function Dashboard() {
-  const data: FoodProps[] = [
-    {
-      foodName: "Name1",
-      imageUrl: "/images/cookies.png",
-      price: 20,
-      qtd: 2,
-    },
-    {
-      foodName: "Name2",
-      imageUrl: "/images/cookies.png",
-      price: 20,
-      qtd: 2,
-    },
-    {
-      foodName: "Name3",
-      imageUrl: "/images/cookies.png",
-      price: 20,
-      qtd: 2,
-    },
-    {
-      foodName: "Name4",
-      imageUrl: "/images/cookies.png",
-      price: 20,
-      qtd: 2,
-    },
-    {
-      foodName: "Name5",
-      imageUrl: "/images/cookies.png",
-      price: 20,
-      qtd: 2,
-    },
-    {
-      foodName: "Name6",
-      imageUrl: "/images/cookies.png",
-      price: 20,
-      qtd: 2,
-    },
-  ];
-
   return (
     <div className="mx-auto max-w-6xl">
       <div className="mx-4 mb-16 mt-5 flex items-center rounded bg-linear_200">
@@ -60,15 +21,15 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <SectionFood className="mb-6 px-4" title="Refeições" data={data} />
+      <SectionFood className="mb-6 px-4" title="Refeições" data={foodData} />
 
       <SectionFood
         className="mb-6 px-4"
         title="Pratos principais"
-        data={data}
+        data={foodData}
       />
 
-      <SectionFood className="mb-6 px-4" title="Lanches" data={data} />
+      <SectionFood className="mb-6 px-4" title="Lanches" data={foodData} />
     </div>
   );
 }

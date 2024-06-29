@@ -27,13 +27,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      className={`${roboto.variable} ${poppins.variable} antialiased`}
-    >
-      <body>
-        <section className="min-h-screen">{children}</section>
-      </body>
+    <html className={`${poppins.className} antialiased `}>
+      <body>{children}</body>
     </html>
   );
 }
