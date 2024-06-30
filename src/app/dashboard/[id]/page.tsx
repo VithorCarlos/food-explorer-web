@@ -14,7 +14,7 @@ export interface PageProps {
 export default function Preview({ params }: PageProps) {
   const { id } = params;
   const food = foodData.find((food) => food.id === id);
-
+  const isAdmin = false;
   return (
     <section className="mx-auto max-w-6xl">
       <GobackButton className="mt-8" />
@@ -32,10 +32,18 @@ export default function Preview({ params }: PageProps) {
           <Tags tags={tags} />
 
           <div className="mt-8 flex items-center justify-center gap-3 lg:justify-start">
-            <ButtonQuantity id={id} />
+            {!isAdmin && <ButtonQuantity id={id} />}
 
             <Button className="w-max px-8">
-              <Currency id={id} price={food?.price!} customText="Incluir ∙ " />
+              {isAdmin ? (
+                <span>Editar prato</span>
+              ) : (
+                <Currency
+                  id={id}
+                  price={food?.price!}
+                  customText="Incluir ∙ "
+                />
+              )}
             </Button>
           </div>
         </div>

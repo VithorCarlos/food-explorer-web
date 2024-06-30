@@ -3,9 +3,8 @@
 import { Button } from "@/components/button";
 import { ButtonQuantity } from "@/components/button-quantity";
 import { FoodPropsDTO } from "@/dto/food.dto";
-import { formatCurrency } from "@/utils/fomart-curency";
 import { shortDescription } from "@/utils/short-description";
-import { ChevronLeft, ChevronRight, Heart, Minus, Plus } from "lucide-react";
+import { ChevronLeft, ChevronRight, Edit3, Heart } from "lucide-react";
 import Link from "next/link";
 import { ComponentProps, useEffect, useRef, useState } from "react";
 import { tv } from "tailwind-variants";
@@ -32,7 +31,7 @@ export function SectionFood({ title, data, ...props }: SectionFoodProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [showLeftButton, setShowLeftButton] = useState(false);
   const [showRightButton, setShowRightButton] = useState(true);
-
+  const isAdmin = false;
   const handleSaveFavorite = (title: string) => {
     setFavorites((prevFavorites) => {
       if (prevFavorites.includes(title)) {
@@ -98,14 +97,22 @@ export function SectionFood({ title, data, ...props }: SectionFoodProps) {
                 key={food.title}
                 className="relative flex min-w-52 flex-col items-center justify-center gap-3 rounded border border-dark_300 bg-dark_200 p-6"
               >
-                <button onClick={() => handleSaveFavorite(food.id)}>
-                  <Heart
-                    data-favorited={favorites.includes(food.id)}
-                    className={heart({
-                      color: favorites.includes(food.id) ? "marked" : "default",
-                    })}
-                  />
-                </button>
+                {isAdmin ? (
+                  <button className="absolute right-4 top-4 hover:scale-105">
+                    <Edit3 className="text-white" />
+                  </button>
+                ) : (
+                  <button onClick={() => handleSaveFavorite(food.id)}>
+                    <Heart
+                      data-favorited={favorites.includes(food.id)}
+                      className={heart({
+                        color: favorites.includes(food.id)
+                          ? "marked"
+                          : "default",
+                      })}
+                    />
+                  </button>
+                )}
 
                 <Link
                   className="h-24 w-24 lg:h-44 lg:w-44"

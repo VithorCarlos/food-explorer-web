@@ -1,7 +1,7 @@
 export function shortDescription(description: string) {
   if (description) {
-    return description.length < 35
+    return description.length < 30
       ? description
-      : `${description.substring(0, 35)}...`;
+      : `${description.substring(0, 30)}...`;
   }
 }

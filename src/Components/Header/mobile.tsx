@@ -3,7 +3,7 @@ import { Menu, Search, X } from "lucide-react";
 import { useState } from "react";
 import { ExplorerLogo } from "../explorer-logo";
 import * as Input from "@/components/input";
-import { IconReceipt } from "./IconReceipt";
+import { IconReceipt } from "./icon-receipt";
 
 interface MobileProps {
   isAdmin: boolean;
