@@ -2,8 +2,9 @@ import * as Collapsible from "@radix-ui/react-collapsible";
 import { Menu, Search, X } from "lucide-react";
 import { useState } from "react";
 import { ExplorerLogo } from "../explorer-logo";
-import * as Input from "@/components/input";
 import { IconReceipt } from "./icon-receipt";
+import { Form } from "../input";
+import Link from "next/link";
 
 interface MobileProps {
   isAdmin: boolean;
@@ -38,26 +39,26 @@ export function Mobile({ isAdmin }: MobileProps) {
           </button>
         </Collapsible.Trigger>
 
-        <div className="mx-auto flex items-center gap-2">
+        <Link href="/dashboard" className="mx-auto flex items-center gap-2">
           <ExplorerLogo className="text-xl" />
           {isAdmin && <span className="text-xs text-cake_200">admin</span>}
-        </div>
+        </Link>
 
         {!isAdmin && <IconReceipt count={5} className="relative h-6 w-6" />}
       </div>
 
       <Collapsible.Content className="mt-9 flex flex-col space-y-9 overflow-y-auto bg-dark_400 px-7 data-[state=open]:h-screen">
-        <Input.Root>
-          <Input.Viewport>
+        <Form.Root>
+          <Form.Viewport>
             <Search className="h-5 w-5 text-light_400" />
 
-            <Input.Control
+            <Form.Input
               id="email"
               type="email"
               placeholder="Exemplo: exemplo@hotmail.com"
             />
-          </Input.Viewport>
-        </Input.Root>
+          </Form.Viewport>
+        </Form.Root>
 
         <div className="relative">
           <span className="text-2xl font-light outline-none">Sair</span>

@@ -6,7 +6,7 @@ type LogoProps = React.ComponentProps<"span"> & {
 
 export function ExplorerLogo({ svgClassName, ...props }: LogoProps) {
   return (
-    <strong className="flex  items-center gap-2.5">
+    <strong className="flex items-center gap-2.5">
       <svg
         width={43}
         height={43}

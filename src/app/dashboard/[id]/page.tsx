@@ -4,6 +4,7 @@ import { GobackButton } from "@/components/goback-button";
 import { Tags } from "@/components/tags";
 import { foodData, tags } from "@/utils/mock";
 import { Currency } from "../../../components/currency";
+import { IconReceipt } from "@/components/header/icon-receipt";
 
 export interface PageProps {
   params: {
@@ -16,10 +17,10 @@ export default function Preview({ params }: PageProps) {
   const food = foodData.find((food) => food.id === id);
   const isAdmin = false;
   return (
-    <section className="mx-auto max-w-6xl">
+    <section className="mx-auto max-w-6xl px-8">
       <GobackButton className="mt-8" />
 
-      <div className="mb-20 mt-10 flex flex-col items-center justify-between gap-10 px-6 md:flex-row md:items-start">
+      <div className="mb-20 mt-10 flex flex-col items-center justify-between gap-10  md:flex-row md:items-start">
         <img
           className="h-[264px] w-[264px] rounded-full object-cover md:h-64 md:w-64 lg:h-96 lg:w-96"
           src={food?.imageUrl}
@@ -34,15 +35,18 @@ export default function Preview({ params }: PageProps) {
           <div className="mt-8 flex items-center justify-center gap-3 lg:justify-start">
             {!isAdmin && <ButtonQuantity id={id} />}
 
-            <Button className="w-max px-8">
+            <Button className="px-8 lg:w-max">
               {isAdmin ? (
                 <span>Editar prato</span>
               ) : (
-                <Currency
-                  id={id}
-                  price={food?.price!}
-                  customText="Incluir ∙ "
-                />
+                <div className="flex items-center justify-center gap-2">
+                  <IconReceipt className="h-7 w-7" />
+                  <Currency
+                    id={id}
+                    price={food?.price!}
+                    customText="Pedir ∙ "
+                  />
+                </div>
               )}
             </Button>
           </div>

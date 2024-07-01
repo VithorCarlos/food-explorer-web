@@ -2,8 +2,8 @@
 import { Button } from "@/components/button";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import * as Input from "@/components/input";
 import { ExplorerLogo } from "@/components/explorer-logo";
+import { Form } from "@/components/input";
 
 export default function Login() {
   const router = useRouter();
@@ -26,27 +26,27 @@ export default function Login() {
           <h2 className="sr-only text-3xl font-medium text-light_200 lg:not-sr-only">
             Faça login
           </h2>
-          <Input.Root>
-            <Input.Label title="Email" htmlFor="email" />
-            <Input.Viewport>
-              <Input.Control
+          <Form.Root>
+            <Form.Label title="Email" htmlFor="email" />
+            <Form.Viewport>
+              <Form.Input
                 id="email"
                 type="email"
                 placeholder="Exemplo: exemplo@hotmail.com"
               />
-            </Input.Viewport>
-          </Input.Root>
+            </Form.Viewport>
+          </Form.Root>
 
-          <Input.Root>
-            <Input.Label title="Senha" htmlFor="passowrd" />
-            <Input.Viewport>
-              <Input.Control
+          <Form.Root>
+            <Form.Label title="Senha" htmlFor="passowrd" />
+            <Form.Viewport>
+              <Form.Input
                 id="passowrd"
                 type="passowrd"
                 placeholder="Mínimo 6 caracteres"
               />
-            </Input.Viewport>
-          </Input.Root>
+            </Form.Viewport>
+          </Form.Root>
 
           <Button type="button" onClick={handleRedirect}>
             Entrar

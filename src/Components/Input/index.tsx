@@ -1,6 +1,19 @@
-import { Control } from "./Control";
-import { Label } from "./Label";
-import { Root } from "./Root";
-import { Viewport } from "./Viewport";
+import { Input } from "./input";
+import { Label } from "./label";
+import { Root } from "./root";
+import { Select } from "./select";
+import { SelectItem } from "./select-item";
+import { TextInput } from "./text-input";
+import { Viewport } from "./viewport";
+import { Wrapper } from "./wrapper";
 
-export { Root, Control, Label, Viewport };
+export const Form = {
+  Root,
+  Input,
+  Label,
+  Select,
+  Viewport,
+  SelectItem,
+  TextInput,
+  Wrapper,
+};
