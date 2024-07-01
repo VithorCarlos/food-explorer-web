@@ -105,6 +105,7 @@ export default function CreateDish() {
                 <Form.Select placeholder="Selecione" selectedValue="">
                   {foodCategories.map((categorie, index) => (
                     <Form.SelectItem
+                      key={categorie.key}
                       value={categorie.key}
                       hasSeparator={foodCategories.length - 1 > index}
                     >
