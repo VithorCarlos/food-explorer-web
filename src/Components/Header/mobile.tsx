@@ -60,9 +60,17 @@ export function Mobile({ isAdmin }: MobileProps) {
           </Form.Viewport>
         </Form.Root>
 
-        <div className="relative">
-          <span className="text-2xl font-light outline-none">Sair</span>
-          <div className="absolute -bottom-2.5 left-0 right-0 h-0.5 bg-dark_950"></div>
+        <div className="relative flex flex-col gap-3">
+          <Link
+            href="/dashboard/favorites"
+            className="min-w-max border-b-2 border-dark_950 pb-2"
+          >
+            <span className="text-2xl">Meus favoritos</span>
+          </Link>
+
+          <span className="border-b-2 border-dark_950 pb-2 text-2xl font-light outline-none">
+            Sair
+          </span>
         </div>
       </Collapsible.Content>
     </Collapsible.Root>

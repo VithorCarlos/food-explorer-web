@@ -9,6 +9,7 @@ import Link from "next/link";
 import { ComponentProps, useEffect, useRef, useState } from "react";
 import { tv } from "tailwind-variants";
 import { Currency } from "../../../components/currency";
+import { useFood } from "@/store/useFood";
 
 export interface SectionFoodProps extends ComponentProps<"section"> {
   data: FoodPropsDTO[];
@@ -27,20 +28,14 @@ const heart = tv({
 });
 
 export function SectionFood({ title, data, ...props }: SectionFoodProps) {
-  const [favorites, setFavorites] = useState<string[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
   const [showLeftButton, setShowLeftButton] = useState(false);
   const [showRightButton, setShowRightButton] = useState(true);
   const isAdmin = false;
-  const handleSaveFavorite = (title: string) => {
-    setFavorites((prevFavorites) => {
-      if (prevFavorites.includes(title)) {
-        return prevFavorites.filter((name) => name !== title);
-      } else {
-        return [...prevFavorites, title];
-      }
-    });
-  };
+  const [favorites, handleFavorites] = useFood((state) => [
+    state.favorites,
+    state.handleFavorites,
+  ]);
 
   const scrollLeft = () => {
     if (scrollRef.current) {
@@ -102,11 +97,15 @@ export function SectionFood({ title, data, ...props }: SectionFoodProps) {
                     <Edit3 className="text-white" />
                   </button>
                 ) : (
-                  <button onClick={() => handleSaveFavorite(food.id)}>
+                  <button onClick={() => handleFavorites(food)}>
                     <Heart
-                      data-favorited={favorites.includes(food.id)}
+                      data-favorited={favorites.some(
+                        (favorite) => favorite.id === food.id,
+                      )}
                       className={heart({
-                        color: favorites.includes(food.id)
+                        color: favorites.some(
+                          (favorite) => favorite.id === food.id,
+                        )
                           ? "marked"
                           : "default",
                       })}

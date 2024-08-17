@@ -31,6 +31,10 @@ export function Desktop({ isAdmin }: DesktopProps) {
           </Form.Viewport>
         </Form.Root>
 
+        <Link href="/dashboard/favorites" className="min-w-max">
+          <span className="text-sm">Meus favoritos</span>
+        </Link>
+
         {!isAdmin ? (
           <button className="flex h-14 w-56 items-center justify-center gap-2 rounded-md  bg-tomato_100 px-8 py-6">
             <IconReceipt className="h-7 w-7" />
