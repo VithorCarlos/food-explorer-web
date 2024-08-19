@@ -55,7 +55,7 @@ export function Mobile({ isAdmin }: MobileProps) {
             <Form.Input
               id="email"
               type="email"
-              placeholder="Exemplo: exemplo@hotmail.com"
+              placeholder="exemplo@hotmail.com"
             />
           </Form.Viewport>
         </Form.Root>

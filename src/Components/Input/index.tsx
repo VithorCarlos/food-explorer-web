@@ -1,3 +1,4 @@
+import { Error } from "./error";
 import { Input } from "./input";
 import { Label } from "./label";
 import { Root } from "./root";
@@ -16,4 +17,5 @@ export const Form = {
   SelectItem,
   TextInput,
   Wrapper,
+  Error,
 };

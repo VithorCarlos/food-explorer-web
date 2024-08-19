@@ -7,7 +7,7 @@ export function Viewport({ className, ...props }: InputViewportProps) {
   return (
     <div
       className={twMerge(
-        "group flex items-center gap-3.5 rounded bg-dark_900 pl-3.5",
+        "group flex items-center gap-3.5 rounded bg-dark_900",
         className,
       )}
       {...props}

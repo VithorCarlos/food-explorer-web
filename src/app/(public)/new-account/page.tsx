@@ -1,9 +1,58 @@
+"use client";
 import { Button } from "@/components/button";
 import { ExplorerLogo } from "@/components/explorer-logo";
 import { Form } from "@/components/input";
 import Link from "next/link";
+import { FormProps, schema } from "./form";
+import { fetchCreateUser } from "@/api/user.api";
+import { showToast } from "@/utils/toast-message";
+import { redirect, useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { EyeIcon, EyeOffIcon } from "lucide-react";
+import { useState } from "react";
+import { errorMessages } from "@/utils/errors/register-user";
+import { RequestErrorApi } from "@/utils/errors/request-error";
 
 export default function NewAccount() {
+  const [showPassword, setShowPassword] = useState(false);
+  const [isFetching, setIsFetching] = useState(false);
+  const { replace } = useRouter();
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<FormProps>({
+    resolver: zodResolver(schema),
+  });
+
+  const createUser = async (data: FormProps) => {
+    setIsFetching(true);
+
+    const { name, email, password } = data;
+
+    try {
+      await fetchCreateUser({ name, email, password });
+      reset();
+      replace("/");
+
+      return showToast({
+        type: "success",
+        content: "Conta criada com sucesso! Faça o login...",
+      });
+    } catch (err) {
+      if (err instanceof RequestErrorApi) {
+        return showToast({
+          type: "error",
+          content: errorMessages[err.message],
+        });
+      }
+    } finally {
+      setIsFetching(false);
+    }
+  };
+
   return (
     <section className="w-full">
       <h2 className="sr-only">Crie sua conta no Food Explorer</h2>
@@ -13,7 +62,7 @@ export default function NewAccount() {
         <ExplorerLogo className="text-4xl lg:w-80" />
 
         <form
-          action=""
+          onSubmit={handleSubmit(createUser)}
           className="flex w-full flex-col items-center space-y-8 px-10 lg:bg-dark_700 lg:px-16 lg:py-16"
         >
           <h2 className="sr-only text-3xl font-medium text-light_200 lg:not-sr-only">
@@ -22,8 +71,16 @@ export default function NewAccount() {
           <Form.Root>
             <Form.Label title="Seu nome" htmlFor="name" />
             <Form.Viewport>
-              <Form.Input id="name" placeholder="Exemplo: Vithor Carlos" />
+              <Form.Input
+                id="name"
+                placeholder="Informe seu nome"
+                hasError={!!errors.name}
+                {...register("name")}
+              />
             </Form.Viewport>
+            {errors.name?.message && (
+              <Form.Error message={errors.name?.message} />
+            )}
           </Form.Root>
 
           <Form.Root>
@@ -32,23 +89,46 @@ export default function NewAccount() {
               <Form.Input
                 id="email"
                 type="email"
-                placeholder="Exemplo: exemplo@hotmail.com"
+                hasError={!!errors.email}
+                placeholder="exemplo@hotmail.com"
+                {...register("email")}
               />
             </Form.Viewport>
+            {errors.email?.message && (
+              <Form.Error message={errors.email?.message} />
+            )}
           </Form.Root>
 
           <Form.Root>
-            <Form.Label title="Senha" htmlFor="passowrd" />
+            <Form.Label title="Senha" htmlFor="password" />
             <Form.Viewport>
               <Form.Input
-                id="passowrd"
-                type="passowrd"
+                id="password"
+                type={showPassword ? "text" : "password"}
+                hasError={!!errors.password}
                 placeholder="Mínimo 6 caracteres"
+                {...register("password")}
               />
+              <button
+                className="mr-3.5 h-full"
+                type="button"
+                onClick={() => setShowPassword((state) => !state)}
+              >
+                {showPassword ? (
+                  <EyeOffIcon className="h-6 w-6" />
+                ) : (
+                  <EyeIcon className="h-6 w-6" />
+                )}
+              </button>
             </Form.Viewport>
+            {errors.password?.message && (
+              <Form.Error message={errors.password?.message} />
+            )}
           </Form.Root>
 
-          <Button type="button">Criar Conta</Button>
+          <Button isLoading={isFetching} type="submit">
+            Criar Conta
+          </Button>
 
           <Link href="/" className="text-sm">
             Já tenho uma conta
