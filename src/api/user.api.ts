@@ -1,10 +1,9 @@
-import { CreateUserDTO, LoginUserDTO } from "@/dto/uset.dto";
+import { CreateUserDTO, LoginUserDTO } from "@/dto/user.dto";
 import { env } from "@/env";
 import { makeFetch } from "@/services/http/make-fetch";
 
 interface ResponseLogin {
   accessToken: string;
-  refreshToken: string;
 }
 
 export const fetchCreateUser = async ({

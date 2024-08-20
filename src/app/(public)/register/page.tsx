@@ -6,7 +6,7 @@ import Link from "next/link";
 import { FormProps, schema } from "./form";
 import { fetchCreateUser } from "@/api/user.api";
 import { showToast } from "@/utils/toast-message";
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
@@ -14,7 +14,7 @@ import { useState } from "react";
 import { errorMessages } from "@/utils/errors/register-user";
 import { RequestErrorApi } from "@/utils/errors/request-error";
 
-export default function NewAccount() {
+export default function register() {
   const [showPassword, setShowPassword] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
   const { replace } = useRouter();
@@ -35,7 +35,7 @@ export default function NewAccount() {
     try {
       await fetchCreateUser({ name, email, password });
       reset();
-      replace("/");
+      replace("/login");
 
       return showToast({
         type: "success",

@@ -1,7 +1,6 @@
 import { SectionFood } from "./components/section-food";
-import { foodData } from "@/utils/mock";
 
-export default function Dashboard() {
+export default function dashboard() {
   return (
     <div className="mx-auto max-w-6xl">
       <div className="mx-4 mb-16 mt-5 flex items-center rounded bg-linear_200">
@@ -21,15 +20,11 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <SectionFood className="mb-6 px-4" title="Refeições" data={foodData} />
+      <SectionFood className="mb-6 px-4" title="Refeições" data={[]} />
 
-      <SectionFood
-        className="mb-6 px-4"
-        title="Pratos principais"
-        data={foodData}
-      />
+      <SectionFood className="mb-6 px-4" title="Pratos principais" data={[]} />
 
-      <SectionFood className="mb-6 px-4" title="Lanches" data={foodData} />
+      <SectionFood className="mb-6 px-4" title="Lanches" data={[]} />
     </div>
   );
 }

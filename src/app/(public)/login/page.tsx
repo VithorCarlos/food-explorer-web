@@ -13,6 +13,8 @@ import { errorMessages } from "@/utils/errors/login-user";
 import { useState } from "react";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { fetchLogin } from "@/api/user.api";
+import { TOKEN } from "@/utils/enums/cookie";
+import { setCookie } from "cookies-next";
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
@@ -34,10 +36,14 @@ export default function Login() {
 
     try {
       const response = await fetchLogin({ email, password });
-      const { accessToken, refreshToken } = response?.data;
+      const { accessToken } = response.data;
 
-      console.log({ accessToken, refreshToken });
-      // reset();
+      setCookie(TOKEN.ACCESS_TOKEN, accessToken, {
+        maxAge: 60 * 15, // 15 minutes
+      });
+
+      replace("/dashboard");
+      reset();
     } catch (err) {
       if (err instanceof RequestErrorApi) {
         return showToast({
@@ -114,7 +120,7 @@ export default function Login() {
             Entrar
           </Button>
 
-          <Link href="/new-account" className="text-sm">
+          <Link href="/register" className="text-sm">
             Criar conta
           </Link>
         </form>

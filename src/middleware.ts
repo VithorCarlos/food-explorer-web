@@ -1,9 +1,16 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { checkAuthentication } from "./services/http/check-authentication";
 
-export function middleware(request: NextRequest) {}
+export async function middleware(request: NextRequest) {
+  const authResponse = checkAuthentication(request);
+
+  if (authResponse) {
+    return authResponse;
+  }
+
+  return NextResponse.next();
+}
 
 export const config = {
-  // api: {
-  //   bodyParser: false,
-  // },
+  matcher: ["/((?!api|_next|_vercel|.*\\..*).*)"],
 };
