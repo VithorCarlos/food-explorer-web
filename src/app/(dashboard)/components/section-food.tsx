@@ -115,7 +115,7 @@ export function SectionFood({ title, data, ...props }: SectionFoodProps) {
 
                 <Link
                   className="h-24 w-24 lg:h-44 lg:w-44"
-                  href={`/dashboard/${food.id}`}
+                  href={`/${food.id}`}
                 >
                   <img
                     className="h-full w-full rounded-full object-cover"
@@ -124,7 +124,7 @@ export function SectionFood({ title, data, ...props }: SectionFoodProps) {
                   />
                 </Link>
 
-                <Link href={`/dashboard/${food.id}`}>
+                <Link href={`/${food.id}`}>
                   <span className="flex items-center justify-center gap-1 text-sm">
                     {food.title} <ChevronRight className="w-4" />
                   </span>

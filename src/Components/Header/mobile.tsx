@@ -39,7 +39,7 @@ export function Mobile({ isAdmin }: MobileProps) {
           </button>
         </Collapsible.Trigger>
 
-        <Link href="/dashboard" className="mx-auto flex items-center gap-2">
+        <Link href="/" className="mx-auto flex items-center gap-2">
           <ExplorerLogo className="text-xl" />
           {isAdmin && <span className="text-xs text-cake_200">admin</span>}
         </Link>
@@ -62,7 +62,7 @@ export function Mobile({ isAdmin }: MobileProps) {
 
         <div className="relative flex flex-col gap-3">
           <Link
-            href="/dashboard/favorites"
+            href="/favorites"
             className="min-w-max border-b-2 border-dark_950 pb-2"
           >
             <span className="text-2xl">Meus favoritos</span>

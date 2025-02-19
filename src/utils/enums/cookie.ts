@@ -1,4 +1,3 @@
 export enum TOKEN {
-  REFRESH_TOKEN = "food-explorer:token",
-  ACCESS_TOKEN = "food-explorer:actoken",
+  ACCESS_TOKEN = "food-explorer.session-token",
 }

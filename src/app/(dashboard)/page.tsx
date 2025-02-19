@@ -1,6 +1,9 @@
+import { fetchSearchSnacks } from "@/api/snack.api";
 import { SectionFood } from "./components/section-food";
 
-export default function dashboard() {
+export default async function Dashboard() {
+  const response = await fetchSearchSnacks({ page: "1" });
+  console.log(response);
   return (
     <div className="mx-auto max-w-6xl">
       <div className="mx-4 mb-16 mt-5 flex items-center rounded bg-linear_200">

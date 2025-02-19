@@ -12,15 +12,13 @@ import { RequestErrorApi } from "@/utils/errors/request-error";
 import { errorMessages } from "@/utils/errors/login-user";
 import { useState } from "react";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
-import { fetchLogin } from "@/api/user.api";
-import { TOKEN } from "@/utils/enums/cookie";
-import { setCookie } from "cookies-next";
+
+import { signIn } from "next-auth/react";
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
   const { replace } = useRouter();
-
   const {
     register,
     handleSubmit,
@@ -35,14 +33,17 @@ export default function Login() {
     const { email, password } = data;
 
     try {
-      const response = await fetchLogin({ email, password });
-      const { accessToken } = response.data;
-
-      setCookie(TOKEN.ACCESS_TOKEN, accessToken, {
-        maxAge: 60 * 15, // 15 minutes
+      const result = await signIn("credentials", {
+        email,
+        password,
+        redirect: false,
       });
 
-      replace("/dashboard");
+      if (result?.error) {
+        return;
+      }
+
+      replace("/");
       reset();
     } catch (err) {
       if (err instanceof RequestErrorApi) {
@@ -68,6 +69,7 @@ export default function Login() {
 
         <form
           onSubmit={handleSubmit(loginUser)}
+          method="POST"
           className="flex w-full flex-col items-center space-y-8 rounded-2xl px-10 lg:bg-dark_700 lg:px-16 lg:py-16"
         >
           <h2 className="sr-only text-3xl font-medium text-light_200 lg:not-sr-only">
@@ -79,6 +81,7 @@ export default function Login() {
               <Form.Input
                 id="email"
                 type="email"
+                value={"vithor.carlos99@hotmail.com"}
                 placeholder="exemplo@hotmail.com"
                 hasError={!!errors.email}
                 {...register("email")}
@@ -95,6 +98,7 @@ export default function Login() {
               <Form.Input
                 id="password"
                 type={showPassword ? "text" : "password"}
+                value={"12345678"}
                 placeholder="Mínimo 6 caracteres"
                 {...register("password")}
                 hasError={!!errors.password}

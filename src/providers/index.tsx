@@ -1,7 +1,6 @@
-import "react-toastify/dist/ReactToastify.css";
-
-import { ToastContainer } from "react-toastify";
-import { Suspense } from "react";
+"use client";
+import { NextAuthProvider } from "./session-provider";
+import { Toast } from "./toast";
 
 interface ProviderProps {
   children: React.ReactNode;
@@ -10,10 +9,8 @@ interface ProviderProps {
 export const Provider = async ({ children }: ProviderProps) => {
   return (
     <>
-      <Suspense>
-        <ToastContainer />
-      </Suspense>
-      {children}
+      <Toast />
+      <NextAuthProvider>{children}</NextAuthProvider>
     </>
   );
 };

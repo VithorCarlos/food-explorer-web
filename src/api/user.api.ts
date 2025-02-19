@@ -1,9 +1,15 @@
 import { CreateUserDTO, LoginUserDTO } from "@/dto/user.dto";
 import { env } from "@/env";
-import { makeFetch } from "@/services/http/make-fetch";
+import { fetchWithAuth } from "@/services/http/make-fetch";
+import { JWT } from "next-auth/jwt";
 
 interface ResponseLogin {
   accessToken: string;
+  refreshToken: {
+    id: string;
+    userId: string;
+    expiresIn: number;
+  };
 }
 
 export const fetchCreateUser = async ({
@@ -13,7 +19,7 @@ export const fetchCreateUser = async ({
 }: CreateUserDTO) => {
   const url = `${env.NEXT_PUBLIC_API_BASE_URL}/users`;
 
-  return await makeFetch({
+  return await fetchWithAuth({
     url,
     body: { name, email, password },
     method: "POST",
@@ -23,7 +29,7 @@ export const fetchCreateUser = async ({
 export const fetchLogin = async ({ email, password }: LoginUserDTO) => {
   const url = `${env.NEXT_PUBLIC_API_BASE_URL}/session`;
 
-  return await makeFetch<ResponseLogin>({
+  return await fetchWithAuth<ResponseLogin>({
     url,
     body: { email, password },
     method: "POST",

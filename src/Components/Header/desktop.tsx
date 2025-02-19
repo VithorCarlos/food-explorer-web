@@ -12,7 +12,7 @@ export function Desktop({ isAdmin }: DesktopProps) {
   return (
     <div className="hidden bg-dark_700 lg:block">
       <div className="mx-auto flex h-28 max-w-6xl items-center justify-between gap-8 overflow-hidden  px-7">
-        <Link href="/dashboard" className="flex flex-col items-center">
+        <Link href="/" className="flex flex-col items-center">
           <ExplorerLogo className="w-max text-xl" />
           {isAdmin && (
             <span className="-mt-3 self-end text-xs text-cake_200">admin</span>
@@ -31,7 +31,7 @@ export function Desktop({ isAdmin }: DesktopProps) {
           </Form.Viewport>
         </Form.Root>
 
-        <Link href="/dashboard/favorites" className="min-w-max">
+        <Link href="/favorites" className="min-w-max">
           <span className="text-sm">Meus favoritos</span>
         </Link>
 

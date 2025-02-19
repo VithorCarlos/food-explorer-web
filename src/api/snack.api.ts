@@ -1,6 +1,8 @@
+"use server";
 import { SearchSnacksDTO, SnackDTO } from "@/dto/snack.dto";
 import { env } from "@/env";
-import { makeFetch } from "@/services/http/make-fetch";
+import { fetchWithAuth } from "@/services/http/make-fetch";
+import { redirect } from "next/navigation";
 
 export const fetchSearchSnacks = async ({
   page = "1",
@@ -24,8 +26,16 @@ export const fetchSearchSnacks = async ({
 
   const url = `${env.NEXT_PUBLIC_API_BASE_URL}/snack?${queryString}`;
 
-  return await makeFetch<SnackDTO>({
-    url,
-    method: "GET",
-  });
+  try {
+    const response = await fetchWithAuth({
+      url,
+      method: "GET",
+    });
+
+    const snacks = (await response.json()) ?? [];
+
+    return snacks;
+  } catch (err) {
+    console.log(err);
+  }
 };
