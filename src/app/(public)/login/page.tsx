@@ -13,7 +13,8 @@ import { errorMessages } from "@/utils/errors/login-user";
 import { useState } from "react";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 
-import { signIn } from "next-auth/react";
+import { cookies } from "next/headers";
+import { fetchLogin } from "@/api/user.api";
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
@@ -33,19 +34,15 @@ export default function Login() {
     const { email, password } = data;
 
     try {
-      const result = await signIn("credentials", {
-        email,
-        password,
-        redirect: false,
-      });
+      const { status } = await fetchLogin({ email, password });
 
-      if (result?.error) {
-        return;
+      if (status === 200) {
+        replace("/");
+
+        reset();
       }
-
-      replace("/");
-      reset();
     } catch (err) {
+      console.log({ err });
       if (err instanceof RequestErrorApi) {
         return showToast({
           type: "error",

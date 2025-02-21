@@ -4,6 +4,7 @@ import { RUNTIME } from "./runtime";
 const envSchema = z.object({
   NEXT_PUBLIC_NODE_ENV: z.enum(["development", "production"]),
   NEXT_PUBLIC_API_BASE_URL: z.string().url(),
+  NEXT_PUBLIC_APP_URL: z.string().url(),
 });
 
 const _env = envSchema.safeParse(RUNTIME);

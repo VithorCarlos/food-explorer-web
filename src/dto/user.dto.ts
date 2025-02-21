@@ -18,3 +18,8 @@ export interface LoginUserDTO {
   email: string;
   password: string;
 }
+
+export interface TokensDTO {
+  accessToken: string;
+  refreshToken: string;
+}
