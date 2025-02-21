@@ -1,9 +1,12 @@
-import { fetchSearchSnacks } from "@/api/snack.api";
-import { SectionFood } from "./components/section-food";
+import { fetchSearchFoods } from "@/api/food.api";
+import { SectionFood } from "../../components/section-food";
+import { SnackDTO } from "@/dto/snack.dto";
+import { Suspense } from "react";
 
 export default async function Dashboard() {
-  const response = await fetchSearchSnacks({ page: "1" });
-  console.log(response);
+  const foods = (await fetchSearchFoods({ page: "1" })) as SnackDTO[];
+
+  const snacks = foods.filter((food) => food.category === "snacks");
   return (
     <div className="mx-auto max-w-6xl">
       <div className="mx-4 mb-16 mt-5 flex items-center rounded bg-linear_200">
@@ -22,12 +25,21 @@ export default async function Dashboard() {
           </p>
         </div>
       </div>
+      <Suspense>
+        <SectionFood className="mb-6 px-4" title="Lanches" data={snacks} />
+      </Suspense>
 
-      <SectionFood className="mb-6 px-4" title="Refeições" data={[]} />
+      <Suspense>
+        <SectionFood className="mb-6 px-4" title="Refeições" data={[]} />
+      </Suspense>
 
-      <SectionFood className="mb-6 px-4" title="Pratos principais" data={[]} />
-
-      <SectionFood className="mb-6 px-4" title="Lanches" data={[]} />
+      <Suspense>
+        <SectionFood
+          className="mb-6 px-4"
+          title="Pratos principais"
+          data={[]}
+        />
+      </Suspense>
     </div>
   );
 }

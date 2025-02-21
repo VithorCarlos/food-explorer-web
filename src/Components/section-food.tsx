@@ -8,7 +8,7 @@ import { ChevronLeft, ChevronRight, Edit3, Heart } from "lucide-react";
 import Link from "next/link";
 import { ComponentProps, useEffect, useRef, useState } from "react";
 import { tv } from "tailwind-variants";
-import { Currency } from "../../../components/currency";
+import { Currency } from "./currency";
 import { useFood } from "@/store/useFood";
 
 export interface SectionFoodProps extends ComponentProps<"section"> {
@@ -89,7 +89,7 @@ export function SectionFood({ title, data, ...props }: SectionFoodProps) {
           {!!data &&
             data.map((food) => (
               <div
-                key={food.title}
+                key={food.id}
                 className="relative flex min-w-52 flex-col items-center justify-center gap-3 rounded border border-dark_300 bg-dark_200 p-6"
               >
                 {isAdmin ? (

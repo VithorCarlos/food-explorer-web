@@ -7,12 +7,13 @@ import { Currency } from "../../../components/currency";
 import { IconReceipt } from "@/components/header/icon-receipt";
 
 export interface PageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
-export default function Preview({ params }: PageProps) {
+export default async function Preview(props: PageProps) {
+  const params = await props.params;
   const { id } = params;
   const food = foodData.find((food) => food.id === id);
   const isAdmin = false;

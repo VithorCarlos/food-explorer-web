@@ -13,7 +13,6 @@ import { errorMessages } from "@/utils/errors/login-user";
 import { useState } from "react";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 
-import { cookies } from "next/headers";
 import { fetchLogin } from "@/api/user.api";
 
 export default function Login() {
