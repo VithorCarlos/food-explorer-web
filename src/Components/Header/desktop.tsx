@@ -11,7 +11,7 @@ export interface DesktopProps {
 export function Desktop({ isAdmin }: DesktopProps) {
   return (
     <div className="hidden bg-dark_700 lg:block">
-      <div className="mx-auto flex h-28 max-w-6xl items-center justify-between gap-8 overflow-hidden  px-7">
+      <div className="mx-auto flex h-28 max-w-7xl items-center justify-between gap-8 overflow-hidden  px-7">
         <Link href="/" className="flex flex-col items-center">
           <ExplorerLogo className="w-max text-xl" />
           {isAdmin && (
@@ -20,8 +20,8 @@ export function Desktop({ isAdmin }: DesktopProps) {
         </Link>
 
         <Form.Root className="flex-grow">
-          <Form.Viewport>
-            <Search className="h-5 w-5 text-light_400" />
+          <Form.Viewport className="pl-4">
+            <Search className="h-5 w-5  text-light_400" />
 
             <Form.Input
               id="email"
@@ -42,9 +42,11 @@ export function Desktop({ isAdmin }: DesktopProps) {
             <span className="text-sm">(0)</span>
           </button>
         ) : (
-          <button className="flex h-14 w-56 items-center justify-center gap-2 rounded-md bg-tomato_100 px-8 py-6">
-            <span className="text-sm">Novo prato</span>
-          </button>
+          <Link href="/dish/create">
+            <button className="flex h-14 w-56 items-center justify-center gap-2 rounded-md bg-tomato_100 px-8 py-6">
+              <span className="text-sm">Novo prato</span>
+            </button>
+          </Link>
         )}
 
         <button>

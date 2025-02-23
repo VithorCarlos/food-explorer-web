@@ -1,4 +1,3 @@
-"use client";
 import { Toast } from "./toast";
 
 interface ProviderProps {

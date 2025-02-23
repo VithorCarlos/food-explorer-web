@@ -1,12 +1,27 @@
 import { fetchSearchFoods } from "@/api/food.api";
 import { SectionFood } from "../../components/section-food";
-import { SnackDTO } from "@/dto/snack.dto";
 import { Suspense } from "react";
+import { SnackDTO } from "@/dto/snack.dto";
+import { FOOD_CATEGORIES_TRANSLATIONS } from "@/utils/translations/food-categories-translation";
+import { FOOD_CATEGORIES } from "@/utils/enums/food-categories";
+import { getUserRole } from "@/utils/get-user-role";
+import { ROLE } from "@/utils/enums/role";
 
 export default async function Dashboard() {
-  const foods = (await fetchSearchFoods({ page: "1" })) as SnackDTO[];
+  const categories = Object.keys(
+    FOOD_CATEGORIES_TRANSLATIONS,
+  ) as FOOD_CATEGORIES[];
+  const newFoodsByCategory: Record<string, SnackDTO[]> = {};
+  const newCurrentPages: Record<string, number> = {};
 
-  const snacks = foods.filter((food) => food.category === "snacks");
+  for (let category of categories) {
+    const foods = await fetchSearchFoods({ category, page: "1" });
+    newFoodsByCategory[category] = foods;
+    newCurrentPages[category] = 1;
+  }
+  const userRole = await getUserRole();
+  const isAdmin = userRole?.role === ROLE.ADMIN;
+
   return (
     <div className="mx-auto max-w-6xl">
       <div className="mx-4 mb-16 mt-5 flex items-center rounded bg-linear_200">
@@ -25,21 +40,23 @@ export default async function Dashboard() {
           </p>
         </div>
       </div>
-      <Suspense>
-        <SectionFood className="mb-6 px-4" title="Lanches" data={snacks} />
-      </Suspense>
 
-      <Suspense>
-        <SectionFood className="mb-6 px-4" title="Refeições" data={[]} />
-      </Suspense>
+      {categories.map((category) => {
+        const categoryFoods = newFoodsByCategory[category] || [];
 
-      <Suspense>
-        <SectionFood
-          className="mb-6 px-4"
-          title="Pratos principais"
-          data={[]}
-        />
-      </Suspense>
+        if (categoryFoods.length === 0) return null;
+
+        return (
+          <Suspense key={category}>
+            <SectionFood
+              className="mb-6 px-4"
+              title={FOOD_CATEGORIES_TRANSLATIONS[category]}
+              data={categoryFoods}
+              isAdmin={isAdmin}
+            />
+          </Suspense>
+        );
+      })}
     </div>
   );
 }

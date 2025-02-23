@@ -3,9 +3,11 @@
 import { Desktop } from "./desktop";
 import { Mobile } from "./mobile";
 
-export function Header() {
-  const isAdmin = false;
+interface HeaderProps {
+  isAdmin: boolean;
+}
 
+export function Header({ isAdmin }: HeaderProps) {
   return (
     <header>
       <Mobile {...{ isAdmin }} />

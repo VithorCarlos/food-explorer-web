@@ -1,5 +1,8 @@
+import { FOOD_CATEGORIES } from "@/utils/enums/food-categories";
+
 export interface SearchSnacksDTO {
   page: string;
+  category: string;
   perPage?: string;
   title?: string;
   ingredients?: string[];
@@ -8,8 +11,8 @@ export interface SearchSnacksDTO {
 export interface SnackDTO {
   id: string;
   title: string;
-  category: string;
-  ingredients: string[];
+  category: FOOD_CATEGORIES;
+  ingredients?: string[];
   userId: string;
   price: number;
   description: string;

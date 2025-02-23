@@ -2,7 +2,6 @@
 
 import { Button } from "@/components/button";
 import { ButtonQuantity } from "@/components/button-quantity";
-import { FoodPropsDTO } from "@/dto/food.dto";
 import { shortDescription } from "@/utils/short-description";
 import { ChevronLeft, ChevronRight, Edit3, Heart } from "lucide-react";
 import Link from "next/link";
@@ -10,10 +9,12 @@ import { ComponentProps, useEffect, useRef, useState } from "react";
 import { tv } from "tailwind-variants";
 import { Currency } from "./currency";
 import { useFood } from "@/store/useFood";
+import { SnackDTO } from "@/dto/snack.dto";
 
 export interface SectionFoodProps extends ComponentProps<"section"> {
-  data: FoodPropsDTO[];
+  data: SnackDTO[];
   title: string;
+  isAdmin: boolean;
 }
 
 const heart = tv({
@@ -27,11 +28,16 @@ const heart = tv({
   defaultVariants: { color: "marked" },
 });
 
-export function SectionFood({ title, data, ...props }: SectionFoodProps) {
+export function SectionFood({
+  title,
+  data,
+  isAdmin,
+  ...props
+}: SectionFoodProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [showLeftButton, setShowLeftButton] = useState(false);
   const [showRightButton, setShowRightButton] = useState(true);
-  const isAdmin = false;
+
   const [favorites, handleFavorites] = useFood((state) => [
     state.favorites,
     state.handleFavorites,
@@ -93,9 +99,11 @@ export function SectionFood({ title, data, ...props }: SectionFoodProps) {
                 className="relative flex min-w-52 flex-col items-center justify-center gap-3 rounded border border-dark_300 bg-dark_200 p-6"
               >
                 {isAdmin ? (
-                  <button className="absolute right-4 top-4 hover:scale-105">
-                    <Edit3 className="text-white" />
-                  </button>
+                  <Link href={`/dish/edit?id=${food.id}`}>
+                    <button className="absolute right-4 top-4 hover:scale-105">
+                      <Edit3 className="text-white" />
+                    </button>
+                  </Link>
                 ) : (
                   <button onClick={() => handleFavorites(food)}>
                     <Heart
