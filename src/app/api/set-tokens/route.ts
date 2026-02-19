@@ -14,13 +14,18 @@ export async function POST(req: NextRequest) {
   cookieStore.delete(TOKEN.ACCESS_TOKEN);
 
   cookieStore.set(TOKEN.ACCESS_TOKEN, accessToken, {
-    maxAge: 15 * 60, // 15m
+    httpOnly: true,
+    maxAge: 15 * 60,
+    secure: false,
+    sameSite: "lax",
+    path: "/",
   });
 
   cookieStore.set(TOKEN.REFRESH_TOKEN, refreshToken, {
-    maxAge: 7 * 24 * 60 * 60, // 7days
     httpOnly: true,
+    maxAge: 7 * 24 * 60 * 60,
     secure: false,
+    sameSite: "lax",
     path: "/",
   });
 

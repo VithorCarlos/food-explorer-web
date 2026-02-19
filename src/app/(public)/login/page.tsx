@@ -1,7 +1,7 @@
 "use client";
 import { Button } from "@/components/button";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { ExplorerLogo } from "@/components/explorer-logo";
 import { Form } from "@/components/input";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -30,27 +30,15 @@ export default function Login() {
 
   const loginUser = async (data: FormProps) => {
     setIsFetching(true);
+
     const { email, password } = data;
+    const response = await fetchLogin({ email, password });
 
-    try {
-      const { status } = await fetchLogin({ email, password });
-
-      if (status === 200) {
-        replace("/");
-
-        reset();
-      }
-    } catch (err) {
-      console.log({ err });
-      if (err instanceof RequestErrorApi) {
-        return showToast({
-          type: "error",
-          content: errorMessages[err.message],
-        });
-      }
-    } finally {
-      setIsFetching(false);
+    if (response?.ok) {
+      replace("/");
     }
+
+    setIsFetching(false);
   };
 
   return (
@@ -77,7 +65,7 @@ export default function Login() {
               <Form.Input
                 id="email"
                 type="email"
-                value={"vithor.carlos99@hotmail.com"}
+                value={"johndoe@gmail.com"}
                 placeholder="exemplo@hotmail.com"
                 hasError={!!errors.email}
                 {...register("email")}

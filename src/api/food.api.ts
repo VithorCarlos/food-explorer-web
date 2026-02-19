@@ -1,17 +1,17 @@
-"use server";
-import { SearchSnacksDTO, SnackDTO } from "@/dto/snack.dto";
+import { SearchSnacksDTO } from "@/dto/snack.dto";
 import { env } from "@/env";
 import { fetchWithAuth } from "@/services/http/fetchWithAuth";
 import { FOOD_CATEGORIES } from "@/utils/enums/food-categories";
+import { redirect } from "next/navigation";
 
 interface UpdateFoodProps {
-  id: string;
+  snackId: string;
   title?: string;
   description?: string;
   category?: FOOD_CATEGORIES;
   price?: number;
-  imageUrl?: string;
   ingredients?: string[];
+  attachmentId?: string;
 }
 
 interface CreateFoodProps {
@@ -19,7 +19,7 @@ interface CreateFoodProps {
   description: string;
   category: FOOD_CATEGORIES;
   price: number;
-  imageUrl: string;
+  attachmentId: string;
   ingredients?: string[];
 }
 
@@ -50,13 +50,16 @@ export const fetchSearchFoods = async ({
   try {
     const response = await fetchWithAuth(url, {
       method: "GET",
+      cache: "no-store",
     });
+    const data = await response.json();
 
-    const foods = (await response.json()) ?? [];
-
-    return foods;
+    return data;
   } catch (err) {
-    console.log(err);
+    if ((err as Error).message === "UNAUTHORIZED") {
+      redirect("/login");
+    }
+
     throw err;
   }
 };
@@ -72,70 +75,85 @@ export const findOneFood = async (id: string) => {
 
     return snack;
   } catch (err) {
-    console.log(err);
     throw err;
   }
 };
 
 export const fetchUpdateFood = async ({
-  id,
+  snackId,
   title,
   description,
   category,
-  imageUrl,
-  ingredients,
   price,
+  attachmentId,
+  ingredients,
 }: UpdateFoodProps) => {
   try {
-    const url = `${env.NEXT_PUBLIC_API_BASE_URL}/snack`;
+    const url = `${env.NEXT_PUBLIC_API_BASE_URL}/snack/${snackId}`;
 
-    const response = await fetchWithAuth(url, {
+    const response = await fetch(url, {
       method: "PUT",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+        accept: "application/json",
+      },
       body: JSON.stringify({
-        id,
         ...(title && { title }),
         ...(description && { description }),
         ...(category && { category }),
-        ...(imageUrl && { imageUrl }),
         ...(price && { price }),
-        ...(ingredients && ingredients.length > 0 && { ingredients }),
+        ...(attachmentId && { attachmentId }),
+        ...(ingredients && { ingredients }),
       }),
     });
 
-    const { snack } = await response.json();
-
-    return snack;
+    return response;
   } catch (err) {
     throw err;
   }
+};
+
+export const fetchDeleteFood = async (snackId: string) => {
+  const url = `${env.NEXT_PUBLIC_API_BASE_URL}/snack/${snackId}`;
+
+  const response = await fetch(url, {
+    method: "DELETE",
+    credentials: "include",
+  });
+
+  return response;
 };
 
 export const fetchCreateFood = async ({
   title,
   description,
   category,
-  imageUrl,
+  attachmentId,
   ingredients,
   price,
 }: CreateFoodProps) => {
   try {
     const url = `${env.NEXT_PUBLIC_API_BASE_URL}/snack`;
 
-    const response = await fetchWithAuth(url, {
+    const response = await fetch(url, {
       method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+        accept: "application/json",
+      },
       body: JSON.stringify({
         title,
         description,
         category,
-        imageUrl,
+        attachmentId,
         price,
         ...(ingredients && ingredients.length > 0 && { ingredients }),
       }),
     });
 
-    const { snack } = await response.json();
-
-    return snack;
+    return response;
   } catch (err) {
     throw err;
   }

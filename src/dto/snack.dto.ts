@@ -9,14 +9,15 @@ export interface SearchSnacksDTO {
 }
 
 export interface SnackDTO {
-  id: string;
+  snackId: string;
   title: string;
+  attachmentUrl?: string;
+  attachmentId?: string;
   category: FOOD_CATEGORIES;
   ingredients?: string[];
   userId: string;
   price: number;
   description: string;
-  imageUrl: string;
-  created_at?: Date;
-  updated_at?: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
 }

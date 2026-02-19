@@ -7,39 +7,38 @@ import { FOOD_CATEGORIES } from "@/utils/enums/food-categories";
 import { FOOD_CATEGORIES_TRANSLATIONS } from "@/utils/translations/food-categories-translation";
 import { Plus, Upload, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { useForm } from "react-hook-form";
+import { SubmitErrorHandler, useForm } from "react-hook-form";
 import { schema, FormProps } from "./schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { fetchUpdateFood } from "@/api/food.api";
+import { fetchDeleteFood, fetchUpdateFood } from "@/api/food.api";
 import { useRouter } from "next/navigation";
+import { showToast } from "@/utils/toast-message";
+import { fetchUploadAttachment } from "@/api/attachment.api";
 
 interface Props {
   food: SnackDTO;
 }
 
 export const FormEditDish: React.FC<Props> = ({ food }) => {
+  const { register, handleSubmit, setValue, getValues } = useForm<FormProps>({
+    resolver: zodResolver(schema),
+  });
+
+  const inputRef = useRef<HTMLInputElement>(null);
+
   const [ingredients, setingredients] = useState<string[]>(
     food.ingredients ?? [],
   );
   const [isFetching, setIsFetching] = useState(false);
 
-  const inputRef = useRef<HTMLInputElement>(null);
-  const [image, setImage] = useState<{ name: string }>({ name: food.imageUrl });
   const [preview, setPreview] = useState<string | null>(null);
-  const [selectedFoodCategory, setSelectedFoodCategory] = useState<string>(
-    food.category ?? "",
-  );
+  const [file, setFile] = useState<File | null>(null);
+  const [selectedFoodCategory, setSelectedFoodCategory] =
+    useState<FOOD_CATEGORIES>(food.category);
 
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    formState: { errors },
-  } = useForm<FormProps>({
-    resolver: zodResolver(schema),
-  });
+  const attachmentUrlValue = getValues("attachmentUrl");
 
-  const { replace } = useRouter();
+  const { replace, refresh } = useRouter();
 
   const handleAddIgredient = () => {
     const currentInputRef = inputRef.current;
@@ -68,77 +67,88 @@ export const FormEditDish: React.FC<Props> = ({ food }) => {
   ) => {
     if (event.key === "Enter") {
       event.preventDefault();
-      document.getElementById("select-image")?.click();
+      inputRef.current?.click();
     }
   };
 
-  const handleSelectFoodCategory = (value: string) => {
-    const newValue = value as FOOD_CATEGORIES;
+  const handleSelectFoodCategory = (value: FOOD_CATEGORIES) => {
+    const newValue = value;
+
     setSelectedFoodCategory(value);
     setValue("category", newValue);
   };
 
   const editFoodForm = async (data: FormProps) => {
-    if (data) {
-      setIsFetching(true);
-      const { title, description, category, imageUrl, price, ingredients } =
-        data;
+    setIsFetching(true);
 
-      try {
-        await fetchUpdateFood({
-          id: food.id,
-          ...(title && { title }),
-          ...(description && { description }),
-          ...(category && { category }),
-          ...(imageUrl && { imageUrl }),
-          ...(price && { price }),
-          ingredients,
-        });
+    try {
+      let attachmentId = food.attachmentId ?? undefined;
 
-        replace(`/${food.id}`);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setIsFetching(false);
+      const { title, description, category, price, ingredients } = data;
+
+      if (!data) return;
+      if (file) {
+        const attachmentData = await fetchUploadAttachment(file);
+        if (!attachmentData && file) {
+          return;
+        }
+
+        attachmentId = attachmentData.attachmentId;
       }
+      const response = await fetchUpdateFood({
+        ...(title && { title }),
+        ...(description && { description }),
+        ...(category && { category }),
+        ...(price && { price }),
+        attachmentId,
+        ...(ingredients && { ingredients }),
+        snackId: food.snackId,
+      });
+
+      if (response.ok) {
+        replace(`/${food.snackId}`);
+        refresh();
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsFetching(false);
     }
   };
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
+    const fileInput = event.target.files?.[0];
 
-    if (file) {
-      setImage(file);
-      setPreview(URL.createObjectURL(file)); // Cria um preview da imagem
-      setValue("imageUrl", file.name);
+    if (fileInput) {
+      setFile(fileInput);
+      setPreview(URL.createObjectURL(fileInput));
+      setValue("attachmentUrl", fileInput.name);
+    }
+  };
+  const handleDeleteDish = async () => {
+    setIsFetching(true);
+    const isConfirmed = confirm("Tem certeza que deseja remover este prato?");
+    try {
+      if (isConfirmed) {
+        const response = await fetchDeleteFood(food.snackId);
+
+        if (response.ok) {
+          replace("/");
+          refresh();
+        }
+      }
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setIsFetching(false);
     }
   };
 
   useEffect(() => {
-    const currentInputRef = inputRef.current;
-
-    const addOnPressEnter = (event: KeyboardEvent) => {
-      if (event.key === "Enter" || event.keyCode === 13) {
-        handleAddIgredient();
-      }
-    };
-
-    if (!!currentInputRef) {
-      currentInputRef.addEventListener("keyup", addOnPressEnter);
+    if (!attachmentUrlValue) {
+      setValue("attachmentUrl", food.attachmentUrl);
     }
-
-    return () => {
-      if (!!currentInputRef) {
-        currentInputRef.removeEventListener("keyup", addOnPressEnter);
-      }
-    };
-  }, []);
-
-  useEffect(() => {
-    if (image.name) {
-      setValue("imageUrl", image.name);
-    }
-  }, [image]);
+  }, [getValues("attachmentUrl")]);
 
   useEffect(() => {
     if (ingredients.length > 0) {
@@ -146,14 +156,28 @@ export const FormEditDish: React.FC<Props> = ({ food }) => {
     }
   }, [ingredients]);
 
+  useEffect(() => {
+    if (food.category) {
+      setValue("category", selectedFoodCategory);
+    }
+  });
+
+  const onError: SubmitErrorHandler<FormProps> = (errors) => {
+    const keys = Object.values(errors);
+
+    for (const key of keys) {
+      showToast({ type: "error", content: `${key.message}` });
+    }
+  };
+
   return (
     <div className="mb-12">
       <img
         className="mb-8 h-28 w-28 rounded-full object-cover md:h-40 md:w-40 lg:h-28 lg:w-28"
-        src={preview ?? food?.imageUrl}
+        src={preview ?? food?.attachmentUrl}
         alt={food?.title}
       />
-      <form onSubmit={handleSubmit(editFoodForm)}>
+      <form onSubmit={handleSubmit(editFoodForm, onError)}>
         <Form.Root className="gap-8">
           <div className="grid gap-8 lg:grid-cols-[250px_minmax(447px,1fr)_minmax(348px,1fr)]">
             <Form.Wrapper className="md:col-start-1">
@@ -166,16 +190,20 @@ export const FormEditDish: React.FC<Props> = ({ food }) => {
                   onKeyDown={openFileOnPressEnter}
                 >
                   <Upload />
-                  {image && image.name && image.name.length > 20
-                    ? image.name.substring(0, 20).concat("...")
-                    : image?.name || "Alterar imagem"}
+                  {attachmentUrlValue &&
+                  attachmentUrlValue &&
+                  attachmentUrlValue.length > 20
+                    ? attachmentUrlValue.substring(0, 16).concat("...")
+                    : attachmentUrlValue?.substring(0, 16).concat("...") ||
+                      "Alterar imagem"}
 
                   <Form.Input
                     id="select-image"
                     placeholder="Alterar imagem"
-                    className="hidden"
+                    className="sr-only"
                     accept="image/*"
                     type="file"
+                    ref={inputRef}
                     onChange={handleImageChange}
                   />
                 </label>
@@ -226,9 +254,15 @@ export const FormEditDish: React.FC<Props> = ({ food }) => {
                 <div className="custom-scroll flex items-center gap-4  overflow-x-auto px-2 py-2">
                   <div className="flex min-w-max items-center gap-1 rounded-lg border border-dashed border-light_600 px-4 py-[5.5px]">
                     <Form.Input
+                      ref={inputRef}
                       placeholder="Adicionar"
                       className="w-20 flex-grow px-0 py-0"
-                      ref={inputRef}
+                      onKeyDown={(event) => {
+                        if (event.key === "Enter") {
+                          event.preventDefault();
+                          handleAddIgredient();
+                        }
+                      }}
                     />
 
                     <button type="button" onClick={handleAddIgredient}>
@@ -282,14 +316,20 @@ export const FormEditDish: React.FC<Props> = ({ food }) => {
           </Form.Wrapper>
 
           <div className="flex items-center justify-between gap-8 lg:self-end">
-            <Button className="w-max self-end bg-dark_950 px-4">
+            <Button
+              className="w-max self-end bg-dark_950 px-4 hover:bg-dark_900"
+              onClick={handleDeleteDish}
+              isLoading={isFetching}
+              disabled={isFetching}
+            >
               Excluir prato
             </Button>
 
             <Button
               type="submit"
-              className="w-max self-end bg-tomato_400 px-4"
+              className="w-max self-end bg-tomato_400 px-4 hover:bg-tomato_300"
               isLoading={isFetching}
+              disabled={isFetching}
             >
               Salvar alterações
             </Button>

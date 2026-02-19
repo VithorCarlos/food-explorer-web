@@ -1,10 +1,11 @@
+"use client";
 import { Toast } from "./toast";
 
 interface ProviderProps {
   children: React.ReactNode;
 }
 
-export const Provider = async ({ children }: ProviderProps) => {
+export const Provider = ({ children }: ProviderProps) => {
   return (
     <>
       <Toast />

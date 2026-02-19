@@ -8,29 +8,32 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Plus, Upload, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { schema, FormProps } from "./schema";
-import { useForm } from "react-hook-form";
+import { SubmitErrorHandler, useForm } from "react-hook-form";
 import { showToast } from "@/utils/toast-message";
 import { useRouter } from "next/navigation";
 import { fetchCreateFood } from "@/api/food.api";
+import { fetchUploadAttachment } from "@/api/attachment.api";
 
 export function FormCreateDish() {
-  const [ingredients, setingredients] = useState<string[]>([]);
-  const inputRef = useRef<HTMLInputElement>(null);
-  const [image, setImage] = useState<File>();
-  const [preview, setPreview] = useState<string | null>(null);
-  const [isFetching, setIsFetching] = useState(false);
-  const [selectedFoodCategory, setSelectedFoodCategory] = useState<string>("");
-
-  const { back } = useRouter();
-
   const {
     register,
     handleSubmit,
     setValue,
+    getValues,
     formState: { errors },
   } = useForm<FormProps>({
     resolver: zodResolver(schema),
   });
+
+  const [ingredients, setingredients] = useState<string[]>([]);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [preview, setPreview] = useState<string | null>(null);
+  const [isFetching, setIsFetching] = useState(false);
+  const [selectedFoodCategory, setSelectedFoodCategory] = useState<string>("");
+  const [file, setFile] = useState<File | null>(null);
+  const attachmentUrlValue = getValues("attachmentUrl");
+
+  const { replace, refresh } = useRouter();
 
   const handleAddIgredient = () => {
     const currentInputRef = inputRef.current;
@@ -69,9 +72,9 @@ export function FormCreateDish() {
 
     if (file) {
       const url = URL.createObjectURL(file);
-      setImage(file);
+      setFile(file);
       setPreview(url);
-      setValue("imageUrl", url);
+      setValue("attachmentUrl", file.name);
     }
   };
 
@@ -82,31 +85,44 @@ export function FormCreateDish() {
   };
 
   const createFoodForm = async (data: FormProps) => {
-    if (data) {
-      setIsFetching(true);
-      const { title, description, category, imageUrl, price, ingredients } =
-        data;
+    setIsFetching(true);
+    let attachmentId;
 
-      try {
-        await fetchCreateFood({
-          title,
-          description,
-          category,
-          imageUrl,
-          price,
-          ingredients,
-        });
-        back();
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setIsFetching(false);
+    try {
+      if (!data) return;
+      const { title, description, category, price, ingredients } = data;
+
+      if (file) {
+        const attachmentData = await fetchUploadAttachment(file);
+        if (!attachmentData && file) {
+          return;
+        }
+
+        attachmentId = attachmentData.attachmentId;
       }
+
+      const response = await fetchCreateFood({
+        title,
+        description,
+        category,
+        attachmentId,
+        price,
+        ingredients,
+      });
+
+      if (response.ok) {
+        replace("/");
+        refresh();
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsFetching(false);
     }
   };
 
   useEffect(() => {
-    if (errors.imageUrl) {
+    if (errors.attachmentUrl) {
       showToast({
         type: "error",
         content: "A imagem do prato é obrigatória",
@@ -127,40 +143,29 @@ export function FormCreateDish() {
     }
   }, [ingredients]);
 
-  useEffect(() => {
-    const currentInputRef = inputRef.current;
+  const onError: SubmitErrorHandler<FormProps> = (errors) => {
+    const keys = Object.values(errors);
 
-    const addOnPressEnter = (event: KeyboardEvent) => {
-      if (event.key === "Enter" || event.keyCode === 13) {
-        handleAddIgredient();
-      }
-    };
-
-    if (!!currentInputRef) {
-      currentInputRef.addEventListener("keyup", addOnPressEnter);
+    for (const key of keys) {
+      showToast({ type: "error", content: `${key.message}` });
     }
-
-    return () => {
-      if (!!currentInputRef) {
-        currentInputRef.removeEventListener("keyup", addOnPressEnter);
-      }
-    };
-  }, []);
+  };
 
   useEffect(() => {
     console.log(errors);
   }, [errors]);
+
   return (
     <div className="mb-12">
       {preview && (
         <img
           className="mb-8 h-28 w-28 rounded-full object-cover md:h-40 md:w-40 lg:h-28 lg:w-28"
           src={preview!}
-          alt={image?.name}
+          alt={attachmentUrlValue}
         />
       )}
 
-      <form onSubmit={handleSubmit(createFoodForm)}>
+      <form onSubmit={handleSubmit(createFoodForm, onError)}>
         <Form.Root className="gap-8">
           <div className="grid gap-8 lg:grid-cols-[250px_minmax(447px,1fr)_minmax(348px,1fr)]">
             <Form.Wrapper className="md:col-start-1">
@@ -173,7 +178,8 @@ export function FormCreateDish() {
                   onKeyDown={openFileOnPressEnter}
                 >
                   <Upload />
-                  {image?.name || "Selecione a imagem"}
+                  {attachmentUrlValue?.substring(0, 16).concat("...") ||
+                    "Selecione a imagem"}
                   <Form.Input
                     id="select-image"
                     placeholder="Selecione a imagem"
@@ -236,6 +242,12 @@ export function FormCreateDish() {
                       ref={inputRef}
                       placeholder="Adicionar"
                       className="w-20 flex-grow px-0 py-0"
+                      onKeyDown={(event) => {
+                        if (event.key === "Enter") {
+                          event.preventDefault();
+                          handleAddIgredient();
+                        }
+                      }}
                     />
 
                     <button type="button" onClick={handleAddIgredient}>

@@ -1,12 +1,7 @@
-"use server";
 import { CreateUserDTO, LoginUserDTO, TokensDTO } from "@/dto/user.dto";
 import { env } from "@/env";
-import { TOKEN } from "@/utils/enums/cookie";
-import { cookies } from "next/headers";
-
-interface ResponseLogin {
-  status: number;
-}
+import { showToast } from "@/utils/toast-message";
+import { USER_ERRORS_TRANSLATE } from "@/utils/translations/user-errors-translate";
 
 export const fetchCreateUser = async ({
   name,
@@ -25,48 +20,29 @@ export const fetchCreateUser = async ({
   });
 };
 
-export const fetchLogin = async ({
-  email,
-  password,
-}: LoginUserDTO): Promise<ResponseLogin> => {
-  try {
-    const url = `${env.NEXT_PUBLIC_API_BASE_URL}/session`;
+export const fetchLogin = async ({ email, password }: LoginUserDTO) => {
+  const url = `${env.NEXT_PUBLIC_APP_URL}/api/login`;
 
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        accept: "application/json",
-        "Content-Type": "application/json",
-      },
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ email, password }),
+  });
 
-      body: JSON.stringify({ email, password }),
+  const data = await response.json();
+
+  if (!response.ok) {
+    showToast({
+      type: "error",
+      content: USER_ERRORS_TRANSLATE[data.message],
     });
-
-    if (!response.ok) {
-      throw response;
-    }
-
-    const user = await response.json();
-
-    const storeCookie = await cookies();
-
-    storeCookie.set(TOKEN.ACCESS_TOKEN, user.accessToken, {
-      maxAge: 15 * 60, // 15m
-    });
-
-    storeCookie.set(TOKEN.REFRESH_TOKEN, user.refreshToken, {
-      maxAge: 7 * 24 * 60 * 60, // 7days
-      httpOnly: true,
-      secure: false,
-      path: "/",
-    });
-
-    return {
-      status: response.status,
-    };
-  } catch (err) {
-    throw err;
+    return;
   }
+
+  return response;
 };
 
 export const fetchUpdateTokens = async ({
@@ -83,8 +59,8 @@ export const fetchUpdateTokens = async ({
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        accessToken: accessToken,
-        refreshToken: refreshToken,
+        accessToken,
+        refreshToken,
       }),
     });
   } catch (err) {

@@ -2,21 +2,25 @@ import { NextResponse, type NextRequest } from "next/server";
 import { checkAuthentication } from "./services/http/check-authentication";
 import { cookies } from "next/headers";
 import { TOKEN } from "./utils/enums/cookie";
+import { env } from "./env";
 
 export async function middleware(request: NextRequest) {
   const cookieStore = await cookies();
   const refreshToken = cookieStore.get(TOKEN.REFRESH_TOKEN)?.value;
-  let accessToken = cookieStore.get(TOKEN.ACCESS_TOKEN)?.value;
+  const accessToken = cookieStore.get(TOKEN.ACCESS_TOKEN)?.value;
+  const cookieHeader = request.headers.get("cookie") || "";
+
+  const response = NextResponse.next();
 
   if (!accessToken && refreshToken) {
     try {
       const refreshResponse = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/refresh-token`,
+        `${env.NEXT_PUBLIC_API_BASE_URL}/refresh-token`,
         {
           method: "PATCH",
           headers: {
             accept: "application/json",
-            Authorization: `Bearer ${refreshToken}`,
+            cookie: cookieHeader,
           },
         },
       );
@@ -25,28 +29,30 @@ export async function middleware(request: NextRequest) {
         const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
           await refreshResponse.json();
 
-        accessToken = newAccessToken;
-
-        cookieStore.set(TOKEN.ACCESS_TOKEN, newAccessToken, {
-          maxAge: 15 * 60, // 15m
+        response.cookies.set(TOKEN.ACCESS_TOKEN, newAccessToken, {
+          maxAge: 15 * 60,
+          path: "/",
         });
 
-        cookieStore.set(TOKEN.REFRESH_TOKEN, newRefreshToken, {
-          maxAge: 7 * 24 * 60 * 60, // 7days
+        response.cookies.set(TOKEN.REFRESH_TOKEN, newRefreshToken, {
+          maxAge: 7 * 24 * 60 * 60,
           httpOnly: true,
           secure: false,
           path: "/",
         });
 
-        return NextResponse.next();
+        return response;
+      } else {
+        response.cookies.delete(TOKEN.ACCESS_TOKEN);
+        response.cookies.delete(TOKEN.REFRESH_TOKEN);
+        return response;
       }
     } catch (error) {
-      console.error("Erro ao atualizar o token:", error);
-    }
-  }
+      response.cookies.delete(TOKEN.ACCESS_TOKEN);
+      response.cookies.delete(TOKEN.REFRESH_TOKEN);
 
-  if (!refreshToken) {
-    cookieStore.delete(TOKEN.ACCESS_TOKEN);
+      return response;
+    }
   }
 
   const authResponse = checkAuthentication(request, refreshToken);

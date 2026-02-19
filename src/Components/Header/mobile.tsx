@@ -2,8 +2,8 @@ import * as Collapsible from "@radix-ui/react-collapsible";
 import { Menu, Search, X } from "lucide-react";
 import { useState } from "react";
 import { ExplorerLogo } from "../explorer-logo";
-import { IconReceipt } from "./icon-receipt";
-import { Form } from "../input";
+import { IconReceipt } from "@/components/header/icon-receipt";
+import { Form } from "@/components/input";
 import Link from "next/link";
 
 interface MobileProps {

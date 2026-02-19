@@ -1,7 +1,6 @@
-import { FoodPropsDTO } from "@/dto/food.dto";
 import { faker } from "@faker-js/faker";
 
-function createRandomFood(): FoodPropsDTO {
+function createRandomFood() {
   return {
     id: faker.string.uuid(),
     title: faker.commerce.product(),

@@ -3,13 +3,11 @@ import { FormEditDish } from "./form";
 import { findOneFood } from "@/api/food.api";
 
 export interface PageProps {
-  searchParams: Promise<{
-    id: string;
-  }>;
+  params: { id: string };
 }
 
 export default async function EditDish(props: PageProps) {
-  const params = await props.searchParams;
+  const params = props.params;
   const { id } = params;
   const food = await findOneFood(id);
 

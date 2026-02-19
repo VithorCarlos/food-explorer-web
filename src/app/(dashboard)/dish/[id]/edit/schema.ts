@@ -4,7 +4,7 @@ import { z } from "zod";
 export const schema = z.object({
   title: z.string().optional(),
   description: z.string().optional(),
-  imageUrl: z.string().url().optional(),
+  attachmentUrl: z.string().optional(),
   category: z.nativeEnum(FOOD_CATEGORIES).optional(),
   ingredients: z.string().array().optional(),
   price: z.number().optional(),

@@ -95,11 +95,11 @@ export function SectionFood({
           {!!data &&
             data.map((food) => (
               <div
-                key={food.id}
+                key={food.snackId}
                 className="relative flex min-w-52 flex-col items-center justify-center gap-3 rounded border border-dark_300 bg-dark_200 p-6"
               >
                 {isAdmin ? (
-                  <Link href={`/dish/edit?id=${food.id}`}>
+                  <Link href={`/dish/${food.snackId}/edit`}>
                     <button className="absolute right-4 top-4 hover:scale-105">
                       <Edit3 className="text-white" />
                     </button>
@@ -108,11 +108,11 @@ export function SectionFood({
                   <button onClick={() => handleFavorites(food)}>
                     <Heart
                       data-favorited={favorites.some(
-                        (favorite) => favorite.id === food.id,
+                        (favorite) => favorite.id === food.snackId,
                       )}
                       className={heart({
                         color: favorites.some(
-                          (favorite) => favorite.id === food.id,
+                          (favorite) => favorite.id === food.snackId,
                         )
                           ? "marked"
                           : "default",
@@ -123,16 +123,16 @@ export function SectionFood({
 
                 <Link
                   className="h-24 w-24 lg:h-44 lg:w-44"
-                  href={`/${food.id}`}
+                  href={`/${food.snackId}`}
                 >
                   <img
                     className="h-full w-full rounded-full object-cover"
-                    src={food.imageUrl}
+                    src={food.attachmentUrl}
                     alt={food.title}
                   />
                 </Link>
 
-                <Link href={`/${food.id}`}>
+                <Link href={`/${food.snackId}`}>
                   <span className="flex items-center justify-center gap-1 text-sm">
                     {food.title} <ChevronRight className="w-4" />
                   </span>
@@ -142,9 +142,13 @@ export function SectionFood({
                   {shortDescription(food.description)}
                 </p>
 
-                <Currency id={food.id} price={food?.price!} color="cake_200" />
+                <Currency
+                  id={food.snackId}
+                  price={food?.price!}
+                  color="cake_200"
+                />
 
-                <ButtonQuantity id={food.id} />
+                <ButtonQuantity id={food.snackId} />
 
                 <Button>Incluir</Button>
               </div>

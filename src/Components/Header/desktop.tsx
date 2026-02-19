@@ -1,14 +1,22 @@
 import { LogOut, Search } from "lucide-react";
 import { ExplorerLogo } from "../explorer-logo";
-import { IconReceipt } from "./icon-receipt";
-import { Form } from "../input";
 import Link from "next/link";
+import { Form } from "@/components/input";
+import { IconReceipt } from "@/components/header/icon-receipt";
 
 export interface DesktopProps {
   isAdmin: boolean;
 }
 
 export function Desktop({ isAdmin }: DesktopProps) {
+  const handleLogout = async () => {
+    await fetch("/api/logout", {
+      method: "POST",
+    });
+
+    window.location.href = "/";
+  };
+
   return (
     <div className="hidden bg-dark_700 lg:block">
       <div className="mx-auto flex h-28 max-w-7xl items-center justify-between gap-8 overflow-hidden  px-7">
@@ -50,7 +58,7 @@ export function Desktop({ isAdmin }: DesktopProps) {
         )}
 
         <button>
-          <LogOut className="h-6 w-6" />
+          <LogOut onClick={handleLogout} className="h-6 w-6" />
         </button>
       </div>
     </div>
