@@ -1,4 +1,3 @@
-import { jwtDecode } from "jwt-decode";
 import { cookies } from "next/headers";
 import { ROLE } from "./enums/role";
 import { TOKEN } from "./enums/cookie";
@@ -13,7 +12,11 @@ export const getUserRole = async () => {
   const accessToken = cookiesStore.get(TOKEN.ACCESS_TOKEN)?.value;
 
   if (accessToken) {
-    const { role } = jwtDecode(accessToken) as Props;
+    const payloadBase64 = accessToken.split(".")[1];
+    const decodedJson = atob(payloadBase64);
+    const payload = JSON.parse(decodedJson);
+
+    const { role } = payload as Props;
 
     return { role };
   }

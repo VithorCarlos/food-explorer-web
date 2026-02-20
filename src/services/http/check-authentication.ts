@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-export async function checkAuthentication(
+export function checkAuthentication(
   request: NextRequest,
   refreshToken?: string,
 ) {

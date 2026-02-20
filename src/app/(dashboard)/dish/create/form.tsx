@@ -71,6 +71,15 @@ export function FormCreateDish() {
     const file = event.target.files?.[0];
 
     if (file) {
+      const fileSizeLimit = 2 * 1024 * 1024;
+
+      if (file.size > fileSizeLimit) {
+        return showToast({
+          type: "error",
+          content: "O tamanho do arquivo é muito grande. Limite 2MB",
+        });
+      }
+
       const url = URL.createObjectURL(file);
       setFile(file);
       setPreview(url);

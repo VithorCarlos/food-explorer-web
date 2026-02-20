@@ -120,6 +120,14 @@ export const FormEditDish: React.FC<Props> = ({ food }) => {
     const fileInput = event.target.files?.[0];
 
     if (fileInput) {
+      const fileSizeLimit = 2 * 1024 * 1024;
+
+      if (fileInput.size > fileSizeLimit) {
+        return showToast({
+          type: "error",
+          content: "O tamanho do arquivo é muito grande. Limite 2MB",
+        });
+      }
       setFile(fileInput);
       setPreview(URL.createObjectURL(fileInput));
       setValue("attachmentUrl", fileInput.name);

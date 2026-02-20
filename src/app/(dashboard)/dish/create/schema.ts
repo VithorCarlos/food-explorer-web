@@ -7,7 +7,7 @@ export const schema = z.object({
   attachmentUrl: z.string(),
   category: z.nativeEnum(FOOD_CATEGORIES),
   ingredients: z.string().array().optional(),
-  price: z.number().min(1, { message: "Insira o preço do produto" }),
+  price: z.number().finite().min(1, { message: "Insira o preço do produto" }),
 });
 
 export type FormProps = z.infer<typeof schema>;

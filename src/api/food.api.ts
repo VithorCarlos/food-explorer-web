@@ -1,9 +1,7 @@
 import { SearchSnacksDTO } from "@/dto/snack.dto";
 import { env } from "@/env";
-import { fetchWithAuth } from "@/services/http/fetchWithAuth";
+import { fetchOnServer } from "@/services/http/fetch-on-server";
 import { FOOD_CATEGORIES } from "@/utils/enums/food-categories";
-import { redirect } from "next/navigation";
-
 interface UpdateFoodProps {
   snackId: string;
   title?: string;
@@ -42,35 +40,32 @@ export const fetchSearchFoods = async ({
       queryParams.append("ingredients", ingredient);
     });
   }
-
   const queryString = queryParams.toString();
-
   const url = `${env.NEXT_PUBLIC_API_BASE_URL}/snack?${queryString}`;
 
-  try {
-    const response = await fetchWithAuth(url, {
-      method: "GET",
-      cache: "no-store",
-    });
-    const data = await response.json();
+  const response = await fetchOnServer(url, {
+    method: "GET",
+    cache: "no-store",
+  });
 
-    return data;
-  } catch (err) {
-    if ((err as Error).message === "UNAUTHORIZED") {
-      redirect("/login");
-    }
+  const data = await response.json();
 
-    throw err;
+  if (!response.ok) {
+    env.NEXT_PUBLIC_NODE_ENV === "development" && console.error(data.message);
+    return [];
   }
+
+  return data;
 };
 
 export const findOneFood = async (id: string) => {
   try {
     const url = `${env.NEXT_PUBLIC_API_BASE_URL}/snack/${id}`;
 
-    const response = await fetchWithAuth(url, {
+    const response = await fetchOnServer(url, {
       method: "GET",
     });
+
     const { snack } = await response.json();
 
     return snack;
@@ -88,30 +83,26 @@ export const fetchUpdateFood = async ({
   attachmentId,
   ingredients,
 }: UpdateFoodProps) => {
-  try {
-    const url = `${env.NEXT_PUBLIC_API_BASE_URL}/snack/${snackId}`;
+  const url = `${env.NEXT_PUBLIC_API_BASE_URL}/snack/${snackId}`;
 
-    const response = await fetch(url, {
-      method: "PUT",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-        accept: "application/json",
-      },
-      body: JSON.stringify({
-        ...(title && { title }),
-        ...(description && { description }),
-        ...(category && { category }),
-        ...(price && { price }),
-        ...(attachmentId && { attachmentId }),
-        ...(ingredients && { ingredients }),
-      }),
-    });
+  const response = await fetch(url, {
+    method: "PUT",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+      accept: "application/json",
+    },
+    body: JSON.stringify({
+      ...(title && { title }),
+      ...(description && { description }),
+      ...(category && { category }),
+      ...(price && { price }),
+      ...(attachmentId && { attachmentId }),
+      ...(ingredients && { ingredients }),
+    }),
+  });
 
-    return response;
-  } catch (err) {
-    throw err;
-  }
+  return response;
 };
 
 export const fetchDeleteFood = async (snackId: string) => {
@@ -133,28 +124,24 @@ export const fetchCreateFood = async ({
   ingredients,
   price,
 }: CreateFoodProps) => {
-  try {
-    const url = `${env.NEXT_PUBLIC_API_BASE_URL}/snack`;
+  const url = `${env.NEXT_PUBLIC_API_BASE_URL}/snack`;
 
-    const response = await fetch(url, {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-        accept: "application/json",
-      },
-      body: JSON.stringify({
-        title,
-        description,
-        category,
-        attachmentId,
-        price,
-        ...(ingredients && ingredients.length > 0 && { ingredients }),
-      }),
-    });
+  const response = await fetch(url, {
+    method: "POST",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+      accept: "application/json",
+    },
+    body: JSON.stringify({
+      title,
+      description,
+      category,
+      attachmentId,
+      price,
+      ...(ingredients && ingredients.length > 0 && { ingredients }),
+    }),
+  });
 
-    return response;
-  } catch (err) {
-    throw err;
-  }
+  return response;
 };

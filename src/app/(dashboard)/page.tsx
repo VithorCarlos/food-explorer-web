@@ -19,6 +19,7 @@ export default async function Dashboard() {
     newFoodsByCategory[category] = foods;
     newCurrentPages[category] = 1;
   }
+
   const userRole = await getUserRole();
   const isAdmin = userRole?.role === ROLE.ADMIN;
 

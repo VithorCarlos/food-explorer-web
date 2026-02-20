@@ -1,15 +1,12 @@
 "use client";
 import { Button } from "@/components/button";
 import Link from "next/link";
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { ExplorerLogo } from "@/components/explorer-logo";
 import { Form } from "@/components/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { FormProps, schema } from "./form";
-import { showToast } from "@/utils/toast-message";
-import { RequestErrorApi } from "@/utils/errors/request-error";
-import { errorMessages } from "@/utils/errors/login-user";
 import { useState } from "react";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 

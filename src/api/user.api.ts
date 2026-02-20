@@ -1,4 +1,4 @@
-import { CreateUserDTO, LoginUserDTO, TokensDTO } from "@/dto/user.dto";
+import { CreateUserDTO, LoginUserDTO } from "@/dto/user.dto";
 import { env } from "@/env";
 import { showToast } from "@/utils/toast-message";
 import { USER_ERRORS_TRANSLATE } from "@/utils/translations/user-errors-translate";
@@ -21,10 +21,11 @@ export const fetchCreateUser = async ({
 };
 
 export const fetchLogin = async ({ email, password }: LoginUserDTO) => {
-  const url = `${env.NEXT_PUBLIC_APP_URL}/api/login`;
+  const url = `${env.NEXT_PUBLIC_API_BASE_URL}/session`;
 
   const response = await fetch(url, {
     method: "POST",
+    credentials: "include",
     headers: {
       accept: "application/json",
       "Content-Type": "application/json",
@@ -43,27 +44,4 @@ export const fetchLogin = async ({ email, password }: LoginUserDTO) => {
   }
 
   return response;
-};
-
-export const fetchUpdateTokens = async ({
-  accessToken,
-  refreshToken,
-}: TokensDTO) => {
-  try {
-    const url = `${env.NEXT_PUBLIC_APP_URL}/api/set-tokens`;
-
-    return await fetch(url, {
-      method: "POST",
-      headers: {
-        accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        accessToken,
-        refreshToken,
-      }),
-    });
-  } catch (err) {
-    throw err;
-  }
 };
