@@ -48,3 +48,37 @@ input[type="number"] {
     }
   }
 }
+
+@layer utilities {
+  /* 1. Definimos a animação de movimento do fundo */
+  @keyframes shimmer-wave {
+    0% {
+      background-position: -200% 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
+  }
+
+  /* 2. Criamos a classe utilitária que aplica o efeito */
+  .shimmer-effect {
+    /* Cor de fundo base (a cor "apagada") */
+    /* Usando suas cores: dark_400 como base parecia bom no código anterior */
+    background-color: theme("colors.dark_950");
+
+    /* O gradiente mágico: Escuro -> Mais Claro -> Escuro */
+    /* Se o 'dark.300' não der contraste suficiente, tente uma cor mais clara aqui no meio */
+    background-image: linear-gradient(
+      90deg,
+      theme("colors.dark_900") 0%,
+      theme("colors.dark_950") 50%,
+      theme("colors.dark_900") 100%
+    );
+
+    background-repeat: no-repeat;
+    /* O fundo precisa ser maior que o elemento para poder se mover */
+    background-size: 200% 100%;
+    /* Aplica a animação de movimento contínuo */
+    animation: shimmer-wave 1.5s infinite linear;
+  }
+}

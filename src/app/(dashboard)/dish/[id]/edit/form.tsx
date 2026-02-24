@@ -105,7 +105,7 @@ export const FormEditDish: React.FC<Props> = ({ food }) => {
         snackId: food.snackId,
       });
 
-      if (response.ok) {
+      if (response.success) {
         replace(`/${food.snackId}`);
         refresh();
       }
@@ -140,7 +140,7 @@ export const FormEditDish: React.FC<Props> = ({ food }) => {
       if (isConfirmed) {
         const response = await fetchDeleteFood(food.snackId);
 
-        if (response.ok) {
+        if (response.success) {
           replace("/");
           refresh();
         }
@@ -335,7 +335,7 @@ export const FormEditDish: React.FC<Props> = ({ food }) => {
 
             <Button
               type="submit"
-              className="w-max self-end bg-tomato_400 px-4 hover:bg-tomato_300"
+              className="w-max self-end bg-tomato_400 px-4 "
               isLoading={isFetching}
               disabled={isFetching}
             >

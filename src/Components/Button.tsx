@@ -18,7 +18,7 @@ export function Button({
       type="button"
       disabled={isLoading}
       className={twMerge(
-        "flex w-full items-center justify-center rounded bg-tomato_100 py-3 text-sm",
+        "flex w-full items-center justify-center rounded bg-tomato_100 py-3 text-sm hover:bg-tomato_300",
         className,
       )}
       {...props}

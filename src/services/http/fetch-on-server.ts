@@ -29,5 +29,17 @@ export const fetchOnServer = async (
     },
   });
 
-  return response;
+  let data = null;
+
+  try {
+    data = await response.json();
+  } catch (error) {
+    console.error(error);
+  }
+
+  return {
+    success: response.ok,
+    status: response.status,
+    data,
+  };
 };

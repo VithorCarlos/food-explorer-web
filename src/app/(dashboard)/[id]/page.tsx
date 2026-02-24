@@ -20,7 +20,7 @@ export default async function Preview(props: PageProps) {
   const params = await props.params;
   const { id } = params;
 
-  const food = (await findOneFood(id)) as SnackDTO;
+  const { snack: food } = await findOneFood(id);
   const userRole = await getUserRole();
 
   const isAdmin = userRole?.role === ROLE.ADMIN;
@@ -30,22 +30,24 @@ export default async function Preview(props: PageProps) {
       <GobackButton className="mt-8" />
 
       <div className="mb-20 mt-10 flex flex-col items-center justify-between gap-10  md:flex-row md:items-start">
-        <img
-          className="h-[264px] w-[264px] rounded-full object-cover md:h-64 md:w-64 lg:h-96 lg:w-96"
-          src={food?.attachmentUrl}
-          alt={food?.title}
-        />
+        <div className="h-[264px] max-w-[264px] overflow-hidden rounded-full bg-red-200 md:h-64 md:w-full md:max-w-64 lg:h-96 lg:w-full lg:max-w-96">
+          <img
+            className="h-full w-full rounded-full object-cover "
+            src={food?.attachmentUrl}
+            alt={food?.title}
+          />
+        </div>
         <div className="min-w-2xl grid w-full gap-6">
           <h1 className="text-3xl font-bold">{food?.title}</h1>
           <p className="text-base lg:text-2xl">{food?.description}</p>
 
           <Tags tags={food.ingredients!} />
 
-          <div className="mt-8 flex items-center justify-center gap-3 lg:justify-start">
+          <div className="mt-8 flex items-center gap-3 lg:justify-start">
             {!isAdmin && <ButtonQuantity id={id} />}
 
             <Link href={isAdmin ? `/dish/${id}/edit` : "#"}>
-              <Button className="px-8 lg:w-max">
+              <Button className="w-max px-8">
                 {isAdmin ? (
                   <span>Editar prato</span>
                 ) : (

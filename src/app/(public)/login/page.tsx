@@ -62,7 +62,6 @@ export default function Login() {
               <Form.Input
                 id="email"
                 type="email"
-                value={"johndoe@gmail.com"}
                 placeholder="exemplo@hotmail.com"
                 hasError={!!errors.email}
                 {...register("email")}
@@ -79,7 +78,6 @@ export default function Login() {
               <Form.Input
                 id="password"
                 type={showPassword ? "text" : "password"}
-                value={"12345678"}
                 placeholder="Mínimo 6 caracteres"
                 {...register("password")}
                 hasError={!!errors.password}

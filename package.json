@@ -13,6 +13,7 @@
     "@radix-ui/react-collapsible": "^1.1.0",
     "@radix-ui/react-select": "^2.1.1",
     "@reduxjs/toolkit": "^2.2.7",
+    "@tanstack/react-virtual": "^3.13.18",
     "axios": "^1.7.9",
     "dayjs": "^1.11.13",
     "jsonwebtoken": "^9.0.2",

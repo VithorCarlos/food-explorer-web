@@ -53,8 +53,8 @@ export function Mobile({ isAdmin }: MobileProps) {
             <Search className="h-5 w-5 text-light_400" />
 
             <Form.Input
-              id="email"
-              type="email"
+              id="search"
+              type="text"
               placeholder="exemplo@hotmail.com"
             />
           </Form.Viewport>

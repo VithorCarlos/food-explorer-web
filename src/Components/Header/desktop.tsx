@@ -32,8 +32,8 @@ export function Desktop({ isAdmin }: DesktopProps) {
             <Search className="h-5 w-5  text-light_400" />
 
             <Form.Input
-              id="email"
-              type="email"
+              id="search"
+              type="text"
               placeholder="Busque por pratos ou ingredientes"
             />
           </Form.Viewport>

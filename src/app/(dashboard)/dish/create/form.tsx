@@ -119,7 +119,7 @@ export function FormCreateDish() {
         ingredients,
       });
 
-      if (response.ok) {
+      if (response.success) {
         replace("/");
         refresh();
       }
@@ -317,7 +317,7 @@ export function FormCreateDish() {
 
           <Button
             type="submit"
-            className="bg-tomato_400 px-4 lg:w-max lg:self-end"
+            className="px-4 lg:w-max lg:self-end"
             isLoading={isFetching}
           >
             Salvar alterações

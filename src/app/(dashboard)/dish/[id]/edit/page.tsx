@@ -9,7 +9,7 @@ export interface PageProps {
 export default async function EditDish(props: PageProps) {
   const params = props.params;
   const { id } = params;
-  const food = await findOneFood(id);
+  const { snack: food } = await findOneFood(id);
 
   return (
     <section className="mx-auto max-w-6xl px-8 lg:px-4">

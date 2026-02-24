@@ -2,6 +2,7 @@ import { FOOD_CATEGORIES } from "../enums/food-categories";
 
 export const FOOD_CATEGORIES_TRANSLATIONS: Record<FOOD_CATEGORIES, string> = {
   [FOOD_CATEGORIES.BRAZILIAN]: "Brasileira",
+  [FOOD_CATEGORIES.DRINKS]: "Bebidas",
   [FOOD_CATEGORIES.JAPANESE]: "Japonesa",
   [FOOD_CATEGORIES.SNACKS]: "Lanches",
   [FOOD_CATEGORIES.PIZZA]: "Pizza",

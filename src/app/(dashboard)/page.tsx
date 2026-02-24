@@ -1,24 +1,33 @@
-import { fetchSearchFoods } from "@/api/food.api";
-import { SectionFood } from "../../components/section-food";
 import { Suspense } from "react";
-import { SnackDTO } from "@/dto/snack.dto";
 import { FOOD_CATEGORIES_TRANSLATIONS } from "@/utils/translations/food-categories-translation";
 import { FOOD_CATEGORIES } from "@/utils/enums/food-categories";
 import { getUserRole } from "@/utils/get-user-role";
 import { ROLE } from "@/utils/enums/role";
+import { Loader2 } from "lucide-react";
+import { CategoryRow } from "./category-row";
+import { fetchActiveCategories } from "@/api/food.api";
+import { SectionFoodSkeleton } from "@/components/section-food-skeleton";
 
-export default async function Dashboard() {
-  const categories = Object.keys(
-    FOOD_CATEGORIES_TRANSLATIONS,
-  ) as FOOD_CATEGORIES[];
-  const newFoodsByCategory: Record<string, SnackDTO[]> = {};
-  const newCurrentPages: Record<string, number> = {};
+interface DashboardProps {
+  searchParams?: {
+    search?: string;
+  };
+}
 
-  for (let category of categories) {
-    const foods = await fetchSearchFoods({ category, page: "1" });
-    newFoodsByCategory[category] = foods;
-    newCurrentPages[category] = 1;
-  }
+export default async function Dashboard({ searchParams }: DashboardProps) {
+  const searchQuery = searchParams?.search || "";
+
+  const { categories } = await fetchActiveCategories();
+
+  const sortedCategories = categories.sort((a, b) => {
+    const indexA = Object.keys(FOOD_CATEGORIES).indexOf(a);
+    const indexB = Object.keys(FOOD_CATEGORIES).indexOf(b);
+
+    if (indexA === -1) return 1;
+    if (indexB === -1) return -1;
+
+    return indexA - indexB;
+  });
 
   const userRole = await getUserRole();
   const isAdmin = userRole?.role === ROLE.ADMIN;
@@ -31,33 +40,31 @@ export default async function Dashboard() {
           src="/svg/cookies.svg"
           alt="Biscoitos"
         />
-
         <div className="max-w-52 flex-grow space-y-1 py-1 pr-2 lg:max-w-md">
           <strong className="text-lg font-semibold lg:text-4xl">
             Sabores inigualáveis
           </strong>
-          <p className="text-xs text-light_300  lg:text-base">
+          <p className="text-xs text-light_300 lg:text-base">
             Sinta o cuidado do preparo com ingredientes selecionados.
           </p>
         </div>
       </div>
 
-      {categories.map((category) => {
-        const categoryFoods = newFoodsByCategory[category] || [];
-
-        if (categoryFoods.length === 0) return null;
-
-        return (
-          <Suspense key={category}>
-            <SectionFood
-              className="mb-6 px-4"
-              title={FOOD_CATEGORIES_TRANSLATIONS[category]}
-              data={categoryFoods}
-              isAdmin={isAdmin}
-            />
+      {searchQuery ? (
+        <Suspense fallback={<SectionFoodSkeleton />}>
+          <CategoryRow
+            category={categories[0]}
+            isAdmin={isAdmin}
+            searchQuery={searchQuery}
+          />
+        </Suspense>
+      ) : (
+        sortedCategories.map((category) => (
+          <Suspense key={category} fallback={<SectionFoodSkeleton />}>
+            <CategoryRow category={category} isAdmin={isAdmin} />
           </Suspense>
-        );
-      })}
+        ))
+      )}
     </div>
   );
 }

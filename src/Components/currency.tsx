@@ -5,7 +5,7 @@ import { formatCurrency } from "@/utils/fomart-curency";
 import { VariantProps, tv } from "tailwind-variants";
 
 const currency = tv({
-  base: "block ",
+  base: "block text-3xl",
   variants: {
     color: {
       cake_200: "text-cake_200",

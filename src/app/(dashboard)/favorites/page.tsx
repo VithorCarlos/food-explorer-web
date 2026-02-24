@@ -17,7 +17,7 @@ export default function Favorites() {
             <div className="flex w-full basis-full items-center gap-3 sm:basis-[46%] md:basis-[30%] lg:basis-[21%] ">
               <img
                 className="h-20 w-20 rounded-full object-cover"
-                src={favorite.imageUrl}
+                src={favorite.attachmentUrl}
                 alt={`Imagem ${favorite.title}`}
               />
               <div className="flex w-max flex-col items-start justify-start gap-1">

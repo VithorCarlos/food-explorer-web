@@ -1,7 +1,9 @@
-import { SearchSnacksDTO } from "@/dto/snack.dto";
+import { SearchSnacksDTO, SnackDTO } from "@/dto/snack.dto";
+
 import { env } from "@/env";
 import { fetchOnServer } from "@/services/http/fetch-on-server";
 import { FOOD_CATEGORIES } from "@/utils/enums/food-categories";
+import { revalidateTag } from "next/cache";
 interface UpdateFoodProps {
   snackId: string;
   title?: string;
@@ -23,7 +25,7 @@ interface CreateFoodProps {
 
 export const fetchSearchFoods = async ({
   page = "1",
-  perPage = "9",
+  perPage = "4",
   category,
   title,
   ingredients,
@@ -31,7 +33,7 @@ export const fetchSearchFoods = async ({
   const queryParams = new URLSearchParams({
     page,
     perPage,
-    category,
+    ...((!title || !ingredients) && { category }),
     ...(title && { title }),
   });
 
@@ -43,14 +45,14 @@ export const fetchSearchFoods = async ({
   const queryString = queryParams.toString();
   const url = `${env.NEXT_PUBLIC_API_BASE_URL}/snack?${queryString}`;
 
-  const response = await fetchOnServer(url, {
+  console.log({ url });
+
+  const { data, success } = await fetchOnServer(url, {
     method: "GET",
     cache: "no-store",
   });
 
-  const data = await response.json();
-
-  if (!response.ok) {
+  if (!success) {
     env.NEXT_PUBLIC_NODE_ENV === "development" && console.error(data.message);
     return [];
   }
@@ -58,20 +60,30 @@ export const fetchSearchFoods = async ({
   return data;
 };
 
-export const findOneFood = async (id: string) => {
-  try {
-    const url = `${env.NEXT_PUBLIC_API_BASE_URL}/snack/${id}`;
+export const fetchActiveCategories = async (): Promise<{
+  categories: FOOD_CATEGORIES[];
+}> => {
+  const url = `${env.NEXT_PUBLIC_API_BASE_URL}/snack/active-categories`;
 
-    const response = await fetchOnServer(url, {
-      method: "GET",
-    });
+  const { data } = await fetchOnServer(url, {
+    method: "GET",
+    cache: "force-cache",
+    next: {
+      tags: ["active-categories"],
+    },
+  });
 
-    const { snack } = await response.json();
+  return data;
+};
 
-    return snack;
-  } catch (err) {
-    throw err;
-  }
+export const findOneFood = async (id: string): Promise<{ snack: SnackDTO }> => {
+  const url = `${env.NEXT_PUBLIC_API_BASE_URL}/snack/${id}`;
+
+  const { data } = await fetchOnServer(url, {
+    method: "GET",
+  });
+
+  return data;
 };
 
 export const fetchUpdateFood = async ({
@@ -85,13 +97,8 @@ export const fetchUpdateFood = async ({
 }: UpdateFoodProps) => {
   const url = `${env.NEXT_PUBLIC_API_BASE_URL}/snack/${snackId}`;
 
-  const response = await fetch(url, {
+  const response = await fetchOnServer(url, {
     method: "PUT",
-    credentials: "include",
-    headers: {
-      "Content-Type": "application/json",
-      accept: "application/json",
-    },
     body: JSON.stringify({
       ...(title && { title }),
       ...(description && { description }),
@@ -102,15 +109,16 @@ export const fetchUpdateFood = async ({
     }),
   });
 
+  revalidateTag("active-categories");
+
   return response;
 };
 
 export const fetchDeleteFood = async (snackId: string) => {
   const url = `${env.NEXT_PUBLIC_API_BASE_URL}/snack/${snackId}`;
 
-  const response = await fetch(url, {
+  const response = await fetchOnServer(url, {
     method: "DELETE",
-    credentials: "include",
   });
 
   return response;
@@ -126,13 +134,9 @@ export const fetchCreateFood = async ({
 }: CreateFoodProps) => {
   const url = `${env.NEXT_PUBLIC_API_BASE_URL}/snack`;
 
-  const response = await fetch(url, {
+  const response = await fetchOnServer(url, {
     method: "POST",
-    credentials: "include",
-    headers: {
-      "Content-Type": "application/json",
-      accept: "application/json",
-    },
+
     body: JSON.stringify({
       title,
       description,

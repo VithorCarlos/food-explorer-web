@@ -1,7 +1,7 @@
 import { FOOD_CATEGORIES } from "@/utils/enums/food-categories";
 
 export interface SearchSnacksDTO {
-  page: string;
+  page?: string;
   category: string;
   perPage?: string;
   title?: string;
