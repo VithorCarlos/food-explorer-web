@@ -1,23 +1,28 @@
 import { Suspense } from "react";
-import { FOOD_CATEGORIES_TRANSLATIONS } from "@/utils/translations/food-categories-translation";
 import { FOOD_CATEGORIES } from "@/utils/enums/food-categories";
 import { getUserRole } from "@/utils/get-user-role";
 import { ROLE } from "@/utils/enums/role";
-import { Loader2 } from "lucide-react";
 import { CategoryRow } from "./category-row";
-import { fetchActiveCategories } from "@/api/food.api";
 import { SectionFoodSkeleton } from "@/components/section-food-skeleton";
+import { fetchActiveCategories } from "@/services/foods/fetch-active-categories";
 
 interface DashboardProps {
-  searchParams?: {
+  searchParams: Promise<{
     search?: string;
-  };
+  }>;
 }
 
 export default async function Dashboard({ searchParams }: DashboardProps) {
-  const searchQuery = searchParams?.search || "";
+  const params = await searchParams;
 
-  const { categories } = await fetchActiveCategories();
+  const searchQuery = params.search ?? "";
+
+  const [categoriesResponse, userRole] = await Promise.all([
+    fetchActiveCategories(),
+    getUserRole(),
+  ]);
+
+  const categories = categoriesResponse.categories || [];
 
   const sortedCategories = categories.sort((a, b) => {
     const indexA = Object.keys(FOOD_CATEGORIES).indexOf(a);
@@ -29,7 +34,6 @@ export default async function Dashboard({ searchParams }: DashboardProps) {
     return indexA - indexB;
   });
 
-  const userRole = await getUserRole();
   const isAdmin = userRole?.role === ROLE.ADMIN;
 
   return (
@@ -52,11 +56,7 @@ export default async function Dashboard({ searchParams }: DashboardProps) {
 
       {searchQuery ? (
         <Suspense fallback={<SectionFoodSkeleton />}>
-          <CategoryRow
-            category={categories[0]}
-            isAdmin={isAdmin}
-            searchQuery={searchQuery}
-          />
+          <CategoryRow isAdmin={isAdmin} searchQuery={searchQuery} />
         </Suspense>
       ) : (
         sortedCategories.map((category) => (

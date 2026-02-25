@@ -1,23 +1,23 @@
 "use client";
 
-import { Button } from "@/components/button";
+import Button from "@/components/button";
 import { ButtonQuantity } from "@/components/button-quantity";
 import { shortDescription } from "@/utils/short-description";
-import { ChevronLeft, ChevronRight, Edit3, Heart, Loader2 } from "lucide-react";
+import { ChevronLeft, ChevronRight, Edit3, Heart } from "lucide-react";
 import Link from "next/link";
 import { ComponentProps, useEffect, useRef, useState } from "react";
 import { tv } from "tailwind-variants";
 import { Currency } from "./currency";
-import { useFood } from "@/store/useFood";
 import { SnackDTO } from "@/dto/snack.dto";
 import { FOOD_CATEGORIES } from "@/utils/enums/food-categories";
-import { fetchSearchFoods } from "@/api/food.api";
 import { CardFoodSkeleton } from "./section-food-skeleton";
+import { useFoodStore } from "@/providers/food";
+import { fetchSearchFoods } from "@/services/foods/fetch-search-foods";
 
 export interface SectionFoodProps extends ComponentProps<"section"> {
   initialData: SnackDTO[];
-  title: string;
-  category: FOOD_CATEGORIES;
+  title?: string;
+  category?: FOOD_CATEGORIES;
   isAdmin: boolean;
   searchQuery?: string;
 }
@@ -42,11 +42,8 @@ export function SectionFood({
   ...props
 }: SectionFoodProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
-
-  const [isMounted, setIsMounted] = useState(false);
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
+  const favorites = useFoodStore((state) => state.favorites);
+  const handleFavorites = useFoodStore((state) => state.handleFavorites);
 
   const [showLeftButton, setShowLeftButton] = useState(false);
   const [showRightButton, setShowRightButton] = useState(
@@ -57,15 +54,11 @@ export function SectionFood({
   const [page, setPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [hasMore, setHasMore] = useState(initialData.length >= 4);
-  const isLoadingRef = useRef(false);
-  const [favorites, handleFavorites] = useFood((state) => [
-    state.favorites,
-    state.handleFavorites,
-  ]);
+
+  const favoriteIds = new Set(favorites.map((fav) => fav.snackId));
 
   const checkIsFavorite = (snackId: string) => {
-    if (!isMounted) return false;
-    return favorites.some((favorite) => favorite.snackId === snackId);
+    return favoriteIds.has(snackId);
   };
 
   const scrollLeft = () => {
@@ -76,7 +69,6 @@ export function SectionFood({
 
   const scrollRight = () => {
     if (scrollRef.current) {
-      // Deixe apenas isso! O ato de rolar vai acionar o 'handleScroll' automaticamente
       scrollRef.current.scrollBy({ left: 800, behavior: "smooth" });
     }
   };
@@ -88,19 +80,18 @@ export function SectionFood({
     const nextPage = page + 1;
 
     try {
-      const newFoods = await fetchSearchFoods({
+      const { snacks } = await fetchSearchFoods({
         category,
         page: String(nextPage),
         title: search,
         ingredients: search ? [search] : undefined,
       });
-
-      if (!newFoods || newFoods.length === 0) {
+      if (!snacks || snacks.length === 0) {
         setHasMore(false);
       } else {
         setFoods((prev) => {
           const existingIds = new Set(prev.map((f) => f.snackId));
-          const uniqueNewFoods = newFoods.filter(
+          const uniqueNewFoods = snacks.filter(
             (food: SnackDTO) => !existingIds.has(food.snackId),
           );
           return [...prev, ...uniqueNewFoods];
@@ -153,7 +144,7 @@ export function SectionFood({
 
         <div
           ref={scrollRef}
-          className="no-scrollbar relative flex w-full flex-nowrap gap-4 overflow-x-auto scroll-smooth"
+          className="no-scrollbar relative flex w-full flex-nowrap gap-4 overflow-x-auto "
         >
           {!!foods &&
             foods.map((food) => {
@@ -211,7 +202,9 @@ export function SectionFood({
                   {!isAdmin && (
                     <>
                       <ButtonQuantity id={food.snackId} />
-                      <Button>Incluir</Button>
+                      <Button asChild>
+                        <Link href={`/${food.snackId}`}>Incluir</Link>
+                      </Button>
                     </>
                   )}
                 </div>

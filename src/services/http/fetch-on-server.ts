@@ -32,9 +32,12 @@ export const fetchOnServer = async (
   let data = null;
 
   try {
-    data = await response.json();
+    const text = await response.text();
+
+    data = text ? JSON.parse(text) : null;
   } catch (error) {
-    console.error(error);
+    console.error("Erro ao processar JSON da resposta:", error);
+    data = null;
   }
 
   return {

@@ -1,10 +1,9 @@
 "use client";
-import { Button } from "@/components/button";
+import Button from "@/components/button";
 import { ExplorerLogo } from "@/components/explorer-logo";
 import { Form } from "@/components/input";
 import Link from "next/link";
 import { FormProps, schema } from "./form";
-import { fetchCreateUser } from "@/api/user.api";
 import { showToast } from "@/utils/toast-message";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -13,6 +12,7 @@ import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { useState } from "react";
 import { errorMessages } from "@/utils/errors/register-user";
 import { RequestErrorApi } from "@/utils/errors/request-error";
+import { fetchCreateUser } from "@/services/user/fetch-create-user";
 
 export default function register() {
   const [showPassword, setShowPassword] = useState(false);

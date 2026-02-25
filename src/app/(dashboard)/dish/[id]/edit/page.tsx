@@ -1,6 +1,6 @@
 import { GobackButton } from "@/components/goback-button";
 import { FormEditDish } from "./form";
-import { findOneFood } from "@/api/food.api";
+import { findOneFood } from "@/services/foods/find-one-food";
 
 export interface PageProps {
   params: { id: string };

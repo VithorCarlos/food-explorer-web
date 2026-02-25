@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@/components/button";
+import Button from "@/components/button";
 import { Form } from "@/components/input";
 import { SnackDTO } from "@/dto/snack.dto";
 import { FOOD_CATEGORIES } from "@/utils/enums/food-categories";
@@ -10,10 +10,11 @@ import { useEffect, useRef, useState } from "react";
 import { SubmitErrorHandler, useForm } from "react-hook-form";
 import { schema, FormProps } from "./schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { fetchDeleteFood, fetchUpdateFood } from "@/api/food.api";
 import { useRouter } from "next/navigation";
 import { showToast } from "@/utils/toast-message";
-import { fetchUploadAttachment } from "@/api/attachment.api";
+import { fetchUploadAttachment } from "@/services/attachment/fetch-upload-attachment";
+import { fetchUpdateFood } from "@/services/foods/fetch-update-food";
+import { fetchDeleteFood } from "@/services/foods/fetch-delete-food";
 
 interface Props {
   food: SnackDTO;

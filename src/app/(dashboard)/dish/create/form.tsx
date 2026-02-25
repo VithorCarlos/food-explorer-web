@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@/components/button";
+import Button from "@/components/button";
 import { Form } from "@/components/input";
 import { FOOD_CATEGORIES } from "@/utils/enums/food-categories";
 import { FOOD_CATEGORIES_TRANSLATIONS } from "@/utils/translations/food-categories-translation";
@@ -11,8 +11,8 @@ import { schema, FormProps } from "./schema";
 import { SubmitErrorHandler, useForm } from "react-hook-form";
 import { showToast } from "@/utils/toast-message";
 import { useRouter } from "next/navigation";
-import { fetchCreateFood } from "@/api/food.api";
-import { fetchUploadAttachment } from "@/api/attachment.api";
+import { fetchUploadAttachment } from "@/services/attachment/fetch-upload-attachment";
+import { fetchCreateFood } from "@/services/foods/fetch-create-food";
 
 export function FormCreateDish() {
   const {

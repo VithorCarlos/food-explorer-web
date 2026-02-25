@@ -23,8 +23,20 @@ export function Mobile({ isAdmin }: MobileProps) {
     }
   }
 
+  const handleLogout = async () => {
+    await fetch("/api/logout", {
+      method: "POST",
+    });
+
+    window.location.href = "/";
+  };
+
   return (
-    <Collapsible.Root className="lg:hidden">
+    <Collapsible.Root
+      open={menuIsOpen}
+      onOpenChange={handleToggle}
+      className="lg:hidden"
+    >
       <div className="flex h-[7.125rem] items-center justify-between overflow-hidden bg-dark_700 px-7">
         <Collapsible.Trigger asChild>
           <button
@@ -49,13 +61,13 @@ export function Mobile({ isAdmin }: MobileProps) {
 
       <Collapsible.Content className="mt-9 flex flex-col space-y-9 overflow-y-auto bg-dark_400 px-7 data-[state=open]:h-screen">
         <Form.Root>
-          <Form.Viewport>
+          <Form.Viewport className="px-3.5 py-3.5">
             <Search className="h-5 w-5 text-light_400" />
 
-            <Form.Input
+            <Form.Search
               id="search"
               type="text"
-              placeholder="exemplo@hotmail.com"
+              placeholder="Busque por pratos ou ingredientes"
             />
           </Form.Viewport>
         </Form.Root>
@@ -63,14 +75,18 @@ export function Mobile({ isAdmin }: MobileProps) {
         <div className="relative flex flex-col gap-3">
           <Link
             href="/favorites"
+            onClick={() => setMenuIsOpen(false)}
             className="min-w-max border-b-2 border-dark_950 pb-2"
           >
             <span className="text-2xl">Meus favoritos</span>
           </Link>
 
-          <span className="border-b-2 border-dark_950 pb-2 text-2xl font-light outline-none">
-            Sair
-          </span>
+          <button
+            className="w-full min-w-max border-b-2 border-dark_950 pb-2 text-left "
+            onClick={handleLogout}
+          >
+            <span className="text-2xl">Sair</span>
+          </button>
         </div>
       </Collapsible.Content>
     </Collapsible.Root>

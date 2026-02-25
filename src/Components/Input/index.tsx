@@ -7,6 +7,7 @@ import { TextInput } from "./text-input";
 import { Wrapper } from "./wrapper";
 import { SelectItem } from "./select-item";
 import { Error } from "./error";
+import { Search } from "./search";
 
 export const Form = {
   Root,
@@ -18,4 +19,5 @@ export const Form = {
   TextInput,
   Wrapper,
   Error,
+  Search,
 };

@@ -1,15 +1,13 @@
 import { FOOD_CATEGORIES } from "@/utils/enums/food-categories";
 
-export interface SnackDTO {
+export interface FavoriteDTO {
+  favoriteId: string;
   snackId: string;
+  userId: string;
+  attachmentUrl: string;
   title: string;
-  attachmentUrl?: string;
-  attachmentId?: string;
   category: FOOD_CATEGORIES;
   ingredients?: string[];
-  userId: string;
   price: number;
   description: string;
-  createdAt?: Date;
-  updatedAt?: Date;
 }

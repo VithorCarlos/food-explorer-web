@@ -7,19 +7,3 @@ export interface UserDTO {
   created_at: Date;
   updated_at: Date;
 }
-
-export interface CreateUserDTO {
-  name: string;
-  email: string;
-  password: string;
-}
-
-export interface LoginUserDTO {
-  email: string;
-  password: string;
-}
-
-export interface TokensDTO {
-  accessToken: string;
-  refreshToken: string;
-}

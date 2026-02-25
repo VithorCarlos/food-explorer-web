@@ -28,10 +28,10 @@ export function Desktop({ isAdmin }: DesktopProps) {
         </Link>
 
         <Form.Root className="flex-grow">
-          <Form.Viewport className="pl-4">
+          <Form.Viewport className="px-3.5 py-3.5">
             <Search className="h-5 w-5  text-light_400" />
 
-            <Form.Input
+            <Form.Search
               id="search"
               type="text"
               placeholder="Busque por pratos ou ingredientes"

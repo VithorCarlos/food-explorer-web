@@ -1,5 +1,5 @@
 "use client";
-import { Button } from "@/components/button";
+import Button from "@/components/button";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ExplorerLogo } from "@/components/explorer-logo";
@@ -9,8 +9,7 @@ import { useForm } from "react-hook-form";
 import { FormProps, schema } from "./form";
 import { useState } from "react";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
-
-import { fetchLogin } from "@/api/user.api";
+import { fetchLogin } from "@/services/user/fetch-login-user";
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);

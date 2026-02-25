@@ -1,6 +1,6 @@
 "use client";
 
-import { useFood } from "@/store/useFood";
+import { useFoodStore } from "@/providers/food";
 import { Minus, Plus } from "lucide-react";
 
 export interface ButtonQuantityProps {
@@ -8,22 +8,20 @@ export interface ButtonQuantityProps {
 }
 
 export function ButtonQuantity({ id }: ButtonQuantityProps) {
-  const [quantities, addQuantity, removeQuantity] = useFood((state) => [
-    state.quantities,
-    state.addQuantity,
-    state.removeQuantity,
-  ]);
+  const quantities = useFoodStore((state) => state.quantities);
+  const addQuantity = useFoodStore((state) => state.addQuantity);
+  const removeQuantity = useFoodStore((state) => state.removeQuantity);
 
   const quantity = quantities[id] || 1;
 
   return (
-    <div className="flex items-center gap-3.5">
+    <div className="flex items-center gap-2">
       <button onClick={() => removeQuantity(id)}>
-        <Minus />
+        <Minus className="h-5 w-5 lg:h-8 lg:w-8" />
       </button>
-      <span>{quantity}</span>
+      <span className="lg:text-2xl">{quantity}</span>
       <button onClick={() => addQuantity(id)}>
-        <Plus />
+        <Plus className="h-5 w-5 lg:h-8 lg:w-8" />
       </button>
     </div>
   );

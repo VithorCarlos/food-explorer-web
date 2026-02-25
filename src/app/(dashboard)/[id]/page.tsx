@@ -1,14 +1,13 @@
-import { Button } from "@/components/button";
+import Button from "@/components/button";
 import { ButtonQuantity } from "@/components/button-quantity";
 import { GobackButton } from "@/components/goback-button";
 import { Currency } from "../../../components/currency";
 import { IconReceipt } from "@/components/header/icon-receipt";
-import { findOneFood } from "@/api/food.api";
 import { getUserRole } from "@/utils/get-user-role";
 import { ROLE } from "@/utils/enums/role";
 import Link from "next/link";
-import { SnackDTO } from "@/dto/snack.dto";
 import { Tags } from "@/components/tags";
+import { findOneFood } from "@/services/foods/find-one-food";
 
 export interface PageProps {
   params: Promise<{
@@ -26,20 +25,22 @@ export default async function Preview(props: PageProps) {
   const isAdmin = userRole?.role === ROLE.ADMIN;
 
   return (
-    <section className="mx-auto max-w-6xl px-8">
+    <section className="mx-auto max-w-6xl  px-4 md:px-8">
       <GobackButton className="mt-8" />
 
-      <div className="mb-20 mt-10 flex flex-col items-center justify-between gap-10  md:flex-row md:items-start">
-        <div className="h-[264px] max-w-[264px] overflow-hidden rounded-full bg-red-200 md:h-64 md:w-full md:max-w-64 lg:h-96 lg:w-full lg:max-w-96">
+      <div className="mb-20 mt-10 flex flex-col items-center justify-between gap-10 md:flex-row md:items-start">
+        <div className="h-72 w-72 overflow-hidden rounded-full lg:h-96 lg:w-96">
           <img
-            className="h-full w-full rounded-full object-cover "
+            className="h-full w-full object-cover"
             src={food?.attachmentUrl}
             alt={food?.title}
           />
         </div>
-        <div className="min-w-2xl grid w-full gap-6">
-          <h1 className="text-3xl font-bold">{food?.title}</h1>
-          <p className="text-base lg:text-2xl">{food?.description}</p>
+        <div className="flex flex-1 flex-col gap-6">
+          <div className="flex flex-col gap-6">
+            <h1 className="w-full text-3xl font-bold">{food?.title}</h1>
+            <p className="text-base lg:text-2xl">{food?.description}</p>
+          </div>
 
           <Tags tags={food.ingredients!} />
 
@@ -51,8 +52,8 @@ export default async function Preview(props: PageProps) {
                 {isAdmin ? (
                   <span>Editar prato</span>
                 ) : (
-                  <div className="flex items-center justify-center gap-2">
-                    <IconReceipt className="h-7 w-7" />
+                  <div className="flex items-center justify-center gap-1">
+                    <IconReceipt className="h-5 w-5" />
                     <Currency
                       id={id}
                       price={food?.price!}
