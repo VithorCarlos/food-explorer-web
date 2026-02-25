@@ -23,7 +23,6 @@ export default async function Dashboard({ searchParams }: DashboardProps) {
   ]);
 
   const categories = categoriesResponse.categories || [];
-
   const sortedCategories = categories.sort((a, b) => {
     const indexA = Object.keys(FOOD_CATEGORIES).indexOf(a);
     const indexB = Object.keys(FOOD_CATEGORIES).indexOf(b);

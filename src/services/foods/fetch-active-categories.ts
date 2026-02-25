@@ -1,6 +1,7 @@
 import { env } from "@/env";
 import { FOOD_CATEGORIES } from "@/utils/enums/food-categories";
 import { fetchOnServer } from "../http/fetch-on-server";
+import { REVALIDATE } from "@/utils/enums/revalidate";
 
 export const fetchActiveCategories = async (): Promise<{
   categories: FOOD_CATEGORIES[];
@@ -11,7 +12,7 @@ export const fetchActiveCategories = async (): Promise<{
     method: "GET",
     cache: "force-cache",
     next: {
-      tags: ["active-categories"],
+      tags: [REVALIDATE.FETCH_ACTIVE_CATEGORIES],
     },
   });
 

@@ -1,5 +1,7 @@
 import { env } from "@/env";
 import { fetchOnServer } from "../http/fetch-on-server";
+import { SnackDTO } from "@/dto/snack.dto";
+import { REVALIDATE } from "@/utils/enums/revalidate";
 
 interface SearchSnacksRequest {
   page?: string;
@@ -9,13 +11,18 @@ interface SearchSnacksRequest {
   ingredients?: string[];
 }
 
+interface SearchSnacksResponse {
+  snacks: SnackDTO[];
+  pagination: { total: number; hasMore: boolean; nextPage: number | null };
+}
+
 export const fetchSearchFoods = async ({
   page = "1",
   perPage = "4",
   category,
   title,
   ingredients,
-}: SearchSnacksRequest) => {
+}: SearchSnacksRequest): Promise<SearchSnacksResponse> => {
   const queryParams = new URLSearchParams({
     page,
     perPage,
@@ -35,13 +42,20 @@ export const fetchSearchFoods = async ({
     method: "GET",
     cache: "force-cache",
     next: {
-      tags: ["search-foods"],
+      tags: [REVALIDATE.FETCH_SEARCH_FOODS],
     },
   });
 
   if (!success) {
     env.NEXT_PUBLIC_NODE_ENV === "development" && console.error(data.message);
-    return [];
+    return {
+      snacks: [],
+      pagination: {
+        hasMore: false,
+        nextPage: null,
+        total: 0,
+      },
+    };
   }
 
   return data;

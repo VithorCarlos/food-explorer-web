@@ -24,7 +24,7 @@ export async function CategoryRow({
     perPage: "4",
   });
 
-  if (!initialFoods || initialFoods.length === 0) {
+  if (!initialFoods || initialFoods.snacks.length === 0) {
     return null;
   }
   return (

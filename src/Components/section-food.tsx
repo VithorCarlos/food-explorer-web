@@ -77,32 +77,22 @@ export function SectionFood({
     if (isLoading || !hasMore) return;
     const search = searchQuery || undefined;
     setIsLoading(true);
-    const nextPage = page + 1;
-
-    try {
-      const { snacks } = await fetchSearchFoods({
-        category,
-        page: String(nextPage),
-        title: search,
-        ingredients: search ? [search] : undefined,
-      });
-      if (!snacks || snacks.length === 0) {
-        setHasMore(false);
-      } else {
-        setFoods((prev) => {
-          const existingIds = new Set(prev.map((f) => f.snackId));
-          const uniqueNewFoods = snacks.filter(
-            (food: SnackDTO) => !existingIds.has(food.snackId),
-          );
-          return [...prev, ...uniqueNewFoods];
-        });
-        setPage(nextPage);
-      }
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setIsLoading(false);
-    }
+    const { snacks, pagination } = await fetchSearchFoods({
+      category,
+      page: String(page),
+      title: search,
+      ingredients: search ? [search] : undefined,
+    });
+    setHasMore(pagination.hasMore);
+    setFoods((prev) => {
+      const existingIds = new Set(prev.map((f) => f.snackId));
+      const uniqueNewFoods = snacks.filter(
+        (food: SnackDTO) => !existingIds.has(food.snackId),
+      );
+      return [...prev, ...uniqueNewFoods];
+    });
+    setPage(pagination.nextPage ?? 1);
+    setIsLoading(false);
   };
 
   useEffect(() => {

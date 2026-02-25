@@ -50,7 +50,7 @@ export default function Favorites() {
   }, []);
 
   return (
-    <section className="mx-auto mb-10 h-screen max-w-6xl px-8">
+    <section className="mx-auto mb-10 h-screen max-w-6xl px-8 ">
       <h1 className="my-8 text-3xl font-medium">Meus favoritos</h1>
 
       {isFetching && (
@@ -73,13 +73,13 @@ export default function Favorites() {
         </div>
       )}
 
-      <div className="flex flex-wrap items-center justify-center gap-12 md:justify-start md:gap-8">
+      <div className="flex flex-wrap items-center gap-12   md:gap-8">
         {!isFetching &&
           favorites &&
           favorites.map((favorite) => (
             <div
               key={favorite.snackId}
-              className="flex w-full basis-full items-center gap-3 sm:basis-[46%] md:basis-[30%] lg:basis-[21%] "
+              className="flex w-full basis-full items-center gap-3 sm:basis-[46%] md:basis-[30%]"
             >
               <img
                 className="h-20 w-20 rounded-full object-cover"

@@ -1,5 +1,6 @@
 import { env } from "@/env";
 import { fetchOnServer } from "../http/fetch-on-server";
+import { revalidateTags } from "@/utils/revalidate-tags";
 
 export const fetchDeleteFood = async (snackId: string) => {
   const url = `${env.NEXT_PUBLIC_API_BASE_URL}/snack/${snackId}`;
@@ -8,5 +9,6 @@ export const fetchDeleteFood = async (snackId: string) => {
     method: "DELETE",
   });
 
+  revalidateTags();
   return response;
 };

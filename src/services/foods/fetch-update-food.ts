@@ -1,6 +1,7 @@
 import { env } from "@/env";
 import { fetchOnServer } from "../http/fetch-on-server";
 import { FOOD_CATEGORIES } from "@/utils/enums/food-categories";
+import { revalidateTags } from "@/utils/revalidate-tags";
 
 interface UpdateFoodRequest {
   snackId: string;
@@ -35,5 +36,6 @@ export const fetchUpdateFood = async ({
     }),
   });
 
+  revalidateTags();
   return response;
 };

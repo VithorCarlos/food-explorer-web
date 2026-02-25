@@ -1,6 +1,7 @@
 import { SnackDTO } from "@/dto/snack.dto";
 import { env } from "@/env";
 import { fetchOnServer } from "../http/fetch-on-server";
+import { REVALIDATE } from "@/utils/enums/revalidate";
 
 interface FindOneFoodResponse {
   snack: SnackDTO;
@@ -13,7 +14,7 @@ export const findOneFood = async (id: string): Promise<FindOneFoodResponse> => {
     method: "GET",
     cache: "force-cache",
     next: {
-      tags: ["find-one-food"],
+      tags: [REVALIDATE.FETCH_FIND_ONE_FOOD],
     },
   });
 
