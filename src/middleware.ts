@@ -4,6 +4,7 @@ import { cookies } from "next/headers";
 import { TOKEN } from "./utils/enums/cookie";
 import { env } from "./env";
 import { isTokenExpired } from "./services/http/is-token-expired";
+import { fetchRefreshToken } from "./services/refresh/fetch-refresh-token";
 
 export async function middleware(request: NextRequest) {
   const cookieStore = await cookies();
@@ -23,57 +24,28 @@ export async function middleware(request: NextRequest) {
 
   if (needsRefresh && refreshToken) {
     try {
-      const refreshResponse = await fetch(
-        `${env.NEXT_PUBLIC_API_BASE_URL}/refresh-token`,
-        {
-          method: "PATCH",
-          headers: {
-            accept: "application/json",
-            Cookie: `${TOKEN.REFRESH_TOKEN}=${refreshToken}`,
-          },
-        },
-      );
+      const { newAccessToken, newRefreshToken } =
+        await fetchRefreshToken(refreshToken);
 
-      if (refreshResponse.ok) {
-        const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
-          await refreshResponse.json();
+      const response = NextResponse.next();
 
-        const requestHeaders = new Headers(request.headers);
+      response.cookies.set(TOKEN.ACCESS_TOKEN, newAccessToken, {
+        httpOnly: true,
+        maxAge: 15 * 60,
+        secure: env.NEXT_PUBLIC_NODE_ENV === "production",
+        sameSite: "lax",
+        path: "/",
+      });
 
-        requestHeaders.set(
-          "cookie",
-          `${TOKEN.ACCESS_TOKEN}=${newAccessToken}; ${TOKEN.REFRESH_TOKEN}=${newRefreshToken}`,
-        );
+      response.cookies.set(TOKEN.REFRESH_TOKEN, newRefreshToken, {
+        httpOnly: true,
+        maxAge: 7 * 24 * 60 * 60,
+        secure: env.NEXT_PUBLIC_NODE_ENV === "production",
+        sameSite: "lax",
+        path: "/",
+      });
 
-        const response = NextResponse.next({
-          request: {
-            headers: requestHeaders,
-          },
-        });
-
-        response.cookies.set(TOKEN.ACCESS_TOKEN, newAccessToken, {
-          httpOnly: true,
-          maxAge: 15 * 60,
-          secure: env.NEXT_PUBLIC_NODE_ENV === "production",
-          sameSite: "lax",
-          path: "/",
-        });
-
-        response.cookies.set(TOKEN.REFRESH_TOKEN, newRefreshToken, {
-          httpOnly: true,
-          maxAge: 7 * 24 * 60 * 60,
-          secure: env.NEXT_PUBLIC_NODE_ENV === "production",
-          sameSite: "lax",
-          path: "/",
-        });
-
-        return response;
-      } else {
-        const response = NextResponse.next();
-        response.cookies.delete(TOKEN.ACCESS_TOKEN);
-        response.cookies.delete(TOKEN.REFRESH_TOKEN);
-        return response;
-      }
+      return response;
     } catch (error) {
       console.error("Erro ao renovar token:", error);
       const response = NextResponse.redirect(new URL("/login", request.url));
