@@ -4,6 +4,7 @@ import { FavoriteDTO } from "@/dto/favorite.dto";
 import { REVALIDATE } from "@/utils/enums/revalidate";
 
 interface FindManyFavoriteResponse {
+  success: boolean;
   favorites: FavoriteDTO[];
   pagination: { total: number; hasMore: boolean; nextPage: number | null };
 }
@@ -11,6 +12,7 @@ interface FindManyFavoriteResponse {
 export const fetchFindManyFavorite = async (
   page: string,
   perPage: string,
+  userId: string,
 ): Promise<FindManyFavoriteResponse> => {
   const queryParams = new URLSearchParams({
     page,
@@ -25,13 +27,14 @@ export const fetchFindManyFavorite = async (
     method: "GET",
     cache: "force-cache",
     next: {
-      tags: [REVALIDATE.FETCH_FIND_MANY_FAVORITES],
+      tags: [`${REVALIDATE.FETCH_FIND_MANY_FAVORITES}-${userId}`],
     },
   });
 
   if (!success) {
     env.NEXT_PUBLIC_NODE_ENV === "development" && console.error(data.message);
     return {
+      success: false,
       favorites: [],
       pagination: {
         hasMore: false,
@@ -41,5 +44,5 @@ export const fetchFindManyFavorite = async (
     };
   }
 
-  return data;
+  return { ...data, success };
 };

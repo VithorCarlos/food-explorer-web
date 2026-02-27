@@ -11,6 +11,9 @@ export const fetchActiveCategories = async (): Promise<{
   const { data } = await fetchOnServer(url, {
     method: "GET",
     cache: "force-cache",
+    headers: {
+      "Content-Type": "application/json",
+    },
     next: {
       tags: [REVALIDATE.FETCH_ACTIVE_CATEGORIES],
     },

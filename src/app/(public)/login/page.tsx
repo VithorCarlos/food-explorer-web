@@ -10,6 +10,9 @@ import { FormProps, schema } from "./form";
 import { useState } from "react";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { fetchLogin } from "@/services/user/fetch-login-user";
+import { showToast } from "@/utils/toast-message";
+import { USER_ERRORS_TRANSLATE } from "@/utils/translations/user-errors-translate";
+import { RequestErrorApi } from "@/utils/errors/request-error";
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
@@ -18,7 +21,7 @@ export default function Login() {
   const {
     register,
     handleSubmit,
-    reset,
+
     formState: { errors },
   } = useForm<FormProps>({
     resolver: zodResolver(schema),
@@ -27,14 +30,23 @@ export default function Login() {
   const loginUser = async (data: FormProps) => {
     setIsFetching(true);
 
-    const { email, password } = data;
-    const response = await fetchLogin({ email, password });
+    try {
+      const { email, password } = data;
+      const response = await fetchLogin({ email, password });
 
-    if (response?.ok) {
-      replace("/");
+      if (response?.ok) {
+        replace("/");
+      }
+    } catch (err) {
+      if (err instanceof RequestErrorApi) {
+        return showToast({
+          type: "error",
+          content: USER_ERRORS_TRANSLATE[err.message],
+        });
+      }
+    } finally {
+      setIsFetching(false);
     }
-
-    setIsFetching(false);
   };
 
   return (

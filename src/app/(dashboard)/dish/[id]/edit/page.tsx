@@ -1,13 +1,14 @@
 import { GobackButton } from "@/components/goback-button";
 import { FormEditDish } from "./form";
 import { findOneFood } from "@/services/foods/find-one-food";
+import { getUserId } from "@/utils/get-user-id";
 
 export interface PageProps {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 export default async function EditDish(props: PageProps) {
-  const params = props.params;
+  const params = await props.params;
   const { id } = params;
   const { snack: food } = await findOneFood(id);
 

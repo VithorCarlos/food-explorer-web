@@ -1,4 +1,5 @@
 import { env } from "@/env";
+import { RequestErrorApi } from "@/utils/errors/request-error";
 import { showToast } from "@/utils/toast-message";
 import { USER_ERRORS_TRANSLATE } from "@/utils/translations/user-errors-translate";
 
@@ -23,11 +24,7 @@ export const fetchLogin = async ({ email, password }: LoginUserRequest) => {
   const data = await response.json();
 
   if (!response.ok) {
-    showToast({
-      type: "error",
-      content: USER_ERRORS_TRANSLATE[data.message],
-    });
-    return;
+    throw new RequestErrorApi(data.message, response.status);
   }
 
   return response;

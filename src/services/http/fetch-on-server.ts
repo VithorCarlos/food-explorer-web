@@ -25,7 +25,6 @@ export const fetchOnServer = async (
       ...(init.headers || {}),
       ...(cookieHeader && { Cookie: cookieHeader }),
       accept: "application/json",
-      "Content-Type": "application/json",
     },
   });
 

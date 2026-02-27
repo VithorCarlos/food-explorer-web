@@ -1,9 +1,11 @@
 import { ROLE } from "@/utils/enums/role";
 
 export interface UserDTO {
+  id: string;
   name: string;
   email: string;
+  password: string;
   role: ROLE;
-  created_at: Date;
-  updated_at: Date;
+  createdAt: Date;
+  updatedAt: Date;
 }

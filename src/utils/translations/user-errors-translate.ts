@@ -3,4 +3,5 @@ export const USER_ERRORS_TRANSLATE: Record<string, string> = {
   ["email or password do not match"]: "Email ou senha não conferem",
   ["user already exists"]: "Usuário já cadastrado",
   ["email already exists"]: "Usuário já cadastrado",
+  ["password already exists"]: "Escolha uma senha diferente da atual.",
 };

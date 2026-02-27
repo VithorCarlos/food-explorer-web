@@ -73,12 +73,22 @@ export function Mobile({ isAdmin }: MobileProps) {
         </Form.Root>
 
         <div className="relative flex flex-col gap-3">
+          {!isAdmin && (
+            <Link
+              href="/favorites"
+              onClick={() => setMenuIsOpen(false)}
+              className="min-w-max border-b-2 border-dark_950 pb-2"
+            >
+              <span className="text-2xl">Meus favoritos</span>
+            </Link>
+          )}
+
           <Link
-            href="/favorites"
+            href="/account"
             onClick={() => setMenuIsOpen(false)}
             className="min-w-max border-b-2 border-dark_950 pb-2"
           >
-            <span className="text-2xl">Meus favoritos</span>
+            <span className="text-2xl">Minha conta</span>
           </Link>
 
           <button

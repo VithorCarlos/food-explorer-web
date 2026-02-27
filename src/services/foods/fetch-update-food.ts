@@ -1,7 +1,7 @@
 import { env } from "@/env";
 import { fetchOnServer } from "../http/fetch-on-server";
 import { FOOD_CATEGORIES } from "@/utils/enums/food-categories";
-import { revalidateTags } from "@/utils/revalidate-tags";
+import { REVALIDATE } from "@/utils/enums/revalidate";
 
 interface UpdateFoodRequest {
   snackId: string;
@@ -26,6 +26,9 @@ export const fetchUpdateFood = async ({
 
   const response = await fetchOnServer(url, {
     method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
     body: JSON.stringify({
       ...(title && { title }),
       ...(description && { description }),
@@ -36,6 +39,20 @@ export const fetchUpdateFood = async ({
     }),
   });
 
-  revalidateTags();
+  if (response.success) {
+    await fetch(`${env.NEXT_PUBLIC_APP_URL}/api/revalidate`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        tags: [
+          `${REVALIDATE.FETCH_FIND_ONE_FOOD}`,
+          `${REVALIDATE.FETCH_ACTIVE_CATEGORIES}`,
+        ],
+      }),
+    });
+  }
+
   return response;
 };

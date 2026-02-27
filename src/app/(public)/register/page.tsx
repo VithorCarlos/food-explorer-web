@@ -10,9 +10,9 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { useState } from "react";
-import { errorMessages } from "@/utils/errors/register-user";
 import { RequestErrorApi } from "@/utils/errors/request-error";
 import { fetchCreateUser } from "@/services/user/fetch-create-user";
+import { USER_ERRORS_TRANSLATE } from "@/utils/translations/user-errors-translate";
 
 export default function register() {
   const [showPassword, setShowPassword] = useState(false);
@@ -45,7 +45,7 @@ export default function register() {
       if (err instanceof RequestErrorApi) {
         return showToast({
           type: "error",
-          content: errorMessages[err.message],
+          content: USER_ERRORS_TRANSLATE[err.message],
         });
       }
     } finally {
@@ -123,6 +123,25 @@ export default function register() {
             </Form.Viewport>
             {errors.password?.message && (
               <Form.Error message={errors.password?.message} />
+            )}
+          </Form.Root>
+
+          <Form.Root>
+            <Form.Label
+              title="Confirmação de senha"
+              htmlFor="confirm_password"
+            />
+            <Form.Viewport>
+              <Form.Input
+                id="confirm_password"
+                type="password"
+                hasError={!!errors.password}
+                placeholder="Digite sua senha novamente"
+                {...register("confirm_password")}
+              />
+            </Form.Viewport>
+            {errors.confirm_password?.message && (
+              <Form.Error message={errors.confirm_password?.message} />
             )}
           </Form.Root>
 

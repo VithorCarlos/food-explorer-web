@@ -27,6 +27,7 @@ export async function CategoryRow({
   if (!initialFoods || initialFoods.snacks.length === 0) {
     return null;
   }
+
   return (
     <SectionFood
       className="mb-6 px-4"

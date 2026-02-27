@@ -39,8 +39,14 @@ export function Desktop({ isAdmin }: DesktopProps) {
           </Form.Viewport>
         </Form.Root>
 
-        <Link href="/favorites" className="min-w-max">
-          <span className="text-sm">Meus favoritos</span>
+        {!isAdmin && (
+          <Link href="/favorites" className="min-w-max">
+            <span className="text-sm">Meus favoritos</span>
+          </Link>
+        )}
+
+        <Link href="/account" className="min-w-max">
+          <span className="text-sm">Minha conta</span>
         </Link>
 
         {!isAdmin ? (

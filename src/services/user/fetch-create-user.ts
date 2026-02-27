@@ -1,4 +1,5 @@
 import { env } from "@/env";
+import { RequestErrorApi } from "@/utils/errors/request-error";
 
 export interface CreateUserRequest {
   name: string;
@@ -13,7 +14,7 @@ export const fetchCreateUser = async ({
 }: CreateUserRequest) => {
   const url = `${env.NEXT_PUBLIC_API_BASE_URL}/users`;
 
-  return await fetch(url, {
+  const response = await fetch(url, {
     method: "POST",
     headers: {
       accept: "application/json",
@@ -21,4 +22,12 @@ export const fetchCreateUser = async ({
     },
     body: JSON.stringify({ name, email, password }),
   });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new RequestErrorApi(data.message, response.status);
+  }
+
+  return response;
 };

@@ -1,6 +1,6 @@
 import { env } from "@/env";
 import { fetchOnServer } from "../http/fetch-on-server";
-import { revalidateTags } from "@/utils/revalidate-tags";
+import { REVALIDATE } from "@/utils/enums/revalidate";
 
 export const fetchDeleteFood = async (snackId: string) => {
   const url = `${env.NEXT_PUBLIC_API_BASE_URL}/snack/${snackId}`;
@@ -9,6 +9,20 @@ export const fetchDeleteFood = async (snackId: string) => {
     method: "DELETE",
   });
 
-  revalidateTags();
+  if (response.success) {
+    await fetch(`${env.NEXT_PUBLIC_APP_URL}/api/revalidate`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        tags: [
+          `${REVALIDATE.FETCH_FIND_ONE_FOOD}`,
+          `${REVALIDATE.FETCH_ACTIVE_CATEGORIES}`,
+        ],
+      }),
+    });
+  }
+
   return response;
 };

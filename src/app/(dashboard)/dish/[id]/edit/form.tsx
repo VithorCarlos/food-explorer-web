@@ -182,7 +182,7 @@ export const FormEditDish: React.FC<Props> = ({ food }) => {
   return (
     <div className="mb-12">
       <img
-        className="mb-8 h-28 w-28 rounded-full object-cover md:h-40 md:w-40 lg:h-28 lg:w-28"
+        className="mb-8 h-28 w-28 rounded-full object-cover "
         src={preview ?? food?.attachmentUrl}
         alt={food?.title}
       />

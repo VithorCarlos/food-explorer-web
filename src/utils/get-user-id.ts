@@ -1,11 +1,10 @@
 import { cookies } from "next/headers";
-import { ROLE } from "./enums/role";
 import { TOKEN } from "./enums/cookie";
 import { jwtVerify } from "jose";
 
 const secret = new TextEncoder().encode(process.env.JWT_SECRET);
 
-export const getUserRole = async (): Promise<{ role: ROLE } | null> => {
+export const getUserId = async (): Promise<{ id: string } | null> => {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get(TOKEN.ACCESS_TOKEN)?.value;
 
@@ -14,9 +13,9 @@ export const getUserRole = async (): Promise<{ role: ROLE } | null> => {
   try {
     const { payload } = await jwtVerify(accessToken, secret);
 
-    if (!payload.role) return null;
+    if (!payload.sub) return null;
 
-    return { role: payload.role as ROLE };
+    return { id: payload.sub as string };
   } catch {
     return null;
   }

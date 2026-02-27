@@ -1,7 +1,6 @@
 import { env } from "@/env";
 import { fetchOnServer } from "../http/fetch-on-server";
 import { SnackDTO } from "@/dto/snack.dto";
-import { REVALIDATE } from "@/utils/enums/revalidate";
 
 interface SearchSnacksRequest {
   page?: string;
@@ -40,10 +39,7 @@ export const fetchSearchFoods = async ({
 
   const { data, success } = await fetchOnServer(url, {
     method: "GET",
-    cache: "force-cache",
-    next: {
-      tags: [REVALIDATE.FETCH_SEARCH_FOODS],
-    },
+    cache: "no-store",
   });
 
   if (!success) {

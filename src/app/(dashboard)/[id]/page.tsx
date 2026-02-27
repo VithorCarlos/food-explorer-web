@@ -26,7 +26,7 @@ export default async function Preview(props: PageProps) {
 
   return (
     <section className="mx-auto max-w-6xl  px-4 md:px-8">
-      <GobackButton className="mt-8" />
+      <GobackButton className="lg:mt-8" />
 
       <div className="mb-20 mt-10 flex flex-col items-center justify-between gap-10 md:flex-row md:items-start">
         <div className="h-72 w-72 overflow-hidden rounded-full lg:h-96 lg:w-96">
@@ -36,9 +36,9 @@ export default async function Preview(props: PageProps) {
             alt={food?.title}
           />
         </div>
-        <div className="flex flex-1 flex-col gap-6">
-          <div className="flex flex-col gap-6">
-            <h1 className="w-full text-3xl font-bold">{food?.title}</h1>
+        <div className="flex w-full flex-1 flex-col items-center gap-6  md:items-start">
+          <div className="flex flex-col items-center gap-6 md:items-start">
+            <h1 className=" text-3xl font-bold">{food?.title}</h1>
             <p className="text-base lg:text-2xl">{food?.description}</p>
           </div>
 

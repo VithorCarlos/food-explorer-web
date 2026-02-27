@@ -6,6 +6,7 @@ import { createStore } from "zustand";
 
 export interface FoodState {
   favorites: SnackDTO[];
+  userId: string;
   handleFavorites: (food: SnackDTO) => void;
   quantities: { [id: string]: number };
   addQuantity: (id: string) => void;
@@ -45,25 +46,27 @@ export const createFoodStore = (initState: Partial<FoodState>) => {
     }
 
     async function loadFavorites(page: number = 1, perPage = 12) {
-      const { success, data } = await fetchFindManyFavorite(
+      const currentState = get();
+      const { favorites, success, pagination } = await fetchFindManyFavorite(
         String(page),
         String(perPage),
+        currentState.userId,
       );
-      if (success && data) {
+      if (success && favorites) {
         set((state) => {
-          if (page === 1) return { favorites: data.favorites };
+          if (page === 1) return { favorites: favorites };
 
           const existingIds = new Set(state.favorites.map((f) => f.snackId));
 
-          const uniqueNewFavs = data.favorites.filter(
+          const uniqueNewFavs = favorites.filter(
             (f: SnackDTO) => !existingIds.has(f.snackId),
           );
 
           return { favorites: [...state.favorites, ...uniqueNewFavs] };
         });
         return {
-          hasMore: data.pagination.hasMore,
-          nextPage: data.pagination.nextPage,
+          hasMore: pagination.hasMore,
+          nextPage: pagination.nextPage,
         };
       }
       return { hasMore: false, nextPage: null };
@@ -85,9 +88,11 @@ export const createFoodStore = (initState: Partial<FoodState>) => {
           ),
         }));
 
-        const { success } = await fetchRemoveFavorite(data.snackId);
+        const { success } = await fetchRemoveFavorite(
+          data.snackId,
+          currentState.userId,
+        );
         if (!success) {
-          console.error("Unexpected error on REMOVE favorites");
           set((state) => ({ favorites: [data, ...state.favorites] }));
         }
       } else {
@@ -95,7 +100,10 @@ export const createFoodStore = (initState: Partial<FoodState>) => {
           favorites: [data, ...state.favorites],
         }));
 
-        const response = await fetchAddFavorite(data.snackId);
+        const response = await fetchAddFavorite(
+          data.snackId,
+          currentState.userId,
+        );
 
         if (!response.success) {
           console.error("Unexpected error on ADD favorites");
@@ -111,6 +119,7 @@ export const createFoodStore = (initState: Partial<FoodState>) => {
     return {
       quantities: {},
       favorites: [],
+      userId: "",
       addQuantity,
       loadFavorites,
       removeQuantity,
