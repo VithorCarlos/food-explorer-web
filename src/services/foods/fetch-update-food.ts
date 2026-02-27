@@ -35,7 +35,7 @@ export const fetchUpdateFood = async ({
       ...(category && { category }),
       ...(price && { price }),
       ...(attachmentId && { attachmentId }),
-      ...(ingredients && { ingredients }),
+      ...(ingredients?.length && { ingredients }),
     }),
   });
 

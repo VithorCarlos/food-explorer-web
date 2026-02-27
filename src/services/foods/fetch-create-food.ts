@@ -5,7 +5,7 @@ import { REVALIDATE } from "@/utils/enums/revalidate";
 
 interface CreateFoodRequest {
   title: string;
-  description: string;
+  description?: string;
   category: FOOD_CATEGORIES;
   price: number;
   attachmentId: string;
@@ -29,11 +29,11 @@ export const fetchCreateFood = async ({
     },
     body: JSON.stringify({
       title,
-      description,
+      ...(description && { description }),
+      ...(ingredients && ingredients.length > 0 && { ingredients }),
       category,
       attachmentId,
       price,
-      ...(ingredients && ingredients.length > 0 && { ingredients }),
     }),
   });
 

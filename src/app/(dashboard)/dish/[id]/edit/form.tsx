@@ -26,6 +26,7 @@ export const FormEditDish: React.FC<Props> = ({ food }) => {
   });
 
   const inputRef = useRef<HTMLInputElement>(null);
+  const igredientInputRef = useRef<HTMLInputElement>(null);
 
   const [ingredients, setingredients] = useState<string[]>(
     food.ingredients ?? [],
@@ -42,7 +43,7 @@ export const FormEditDish: React.FC<Props> = ({ food }) => {
   const { replace, refresh } = useRouter();
 
   const handleAddIgredient = () => {
-    const currentInputRef = inputRef.current;
+    const currentInputRef = igredientInputRef.current;
 
     if (!!currentInputRef && currentInputRef.value.length > 0) {
       setingredients((state) =>
@@ -102,7 +103,7 @@ export const FormEditDish: React.FC<Props> = ({ food }) => {
         ...(category && { category }),
         ...(price && { price }),
         attachmentId,
-        ...(ingredients && { ingredients }),
+        ...(ingredients?.length && { ingredients }),
         snackId: food.snackId,
       });
 
@@ -134,6 +135,7 @@ export const FormEditDish: React.FC<Props> = ({ food }) => {
       setValue("attachmentUrl", fileInput.name);
     }
   };
+
   const handleDeleteDish = async () => {
     setIsFetching(true);
     const isConfirmed = confirm("Tem certeza que deseja remover este prato?");
@@ -181,11 +183,17 @@ export const FormEditDish: React.FC<Props> = ({ food }) => {
 
   return (
     <div className="mb-12">
-      <img
-        className="mb-8 h-28 w-28 rounded-full object-cover "
-        src={preview ?? food?.attachmentUrl}
-        alt={food?.title}
-      />
+      {preview ||
+        (food?.attachmentUrl && (
+          <button onClick={() => inputRef.current?.click()}>
+            <img
+              className="mb-8 h-28 w-28 rounded-full object-cover"
+              src={preview || food?.attachmentUrl}
+              alt={`imagem de ${food?.title}`}
+            />
+          </button>
+        ))}
+
       <form onSubmit={handleSubmit(editFoodForm, onError)}>
         <Form.Root className="gap-8">
           <div className="grid gap-8 lg:grid-cols-[250px_minmax(447px,1fr)_minmax(348px,1fr)]">
@@ -199,12 +207,10 @@ export const FormEditDish: React.FC<Props> = ({ food }) => {
                   onKeyDown={openFileOnPressEnter}
                 >
                   <Upload />
-                  {attachmentUrlValue &&
-                  attachmentUrlValue &&
-                  attachmentUrlValue.length > 20
+                  {attachmentUrlValue && attachmentUrlValue.length > 20
                     ? attachmentUrlValue.substring(0, 16).concat("...")
                     : attachmentUrlValue?.substring(0, 16).concat("...") ||
-                      "Alterar imagem"}
+                      "Selecione a imagem"}
 
                   <Form.Input
                     id="select-image"
@@ -263,7 +269,7 @@ export const FormEditDish: React.FC<Props> = ({ food }) => {
                 <div className="custom-scroll flex items-center gap-4  overflow-x-auto px-2 py-2">
                   <div className="flex min-w-max items-center gap-1 rounded-lg border border-dashed border-light_600 px-4 py-[5.5px]">
                     <Form.Input
-                      ref={inputRef}
+                      ref={igredientInputRef}
                       placeholder="Adicionar"
                       className="w-20 flex-grow px-0 py-0"
                       onKeyDown={(event) => {

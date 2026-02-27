@@ -32,7 +32,7 @@ export default async function Preview(props: PageProps) {
         <div className="h-72 w-72 overflow-hidden rounded-full lg:h-96 lg:w-96">
           <img
             className="h-full w-full object-cover"
-            src={food?.attachmentUrl}
+            src={food?.attachmentUrl || "/images/default-image-food.webp"}
             alt={food?.title}
           />
         </div>

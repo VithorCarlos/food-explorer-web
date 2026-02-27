@@ -174,7 +174,9 @@ export function SectionFood({
                   >
                     <img
                       className="h-full w-full rounded-full object-cover"
-                      src={food.attachmentUrl}
+                      src={
+                        food.attachmentUrl || "/images/default-image-food.webp"
+                      }
                       alt={food.title}
                     />
                   </Link>

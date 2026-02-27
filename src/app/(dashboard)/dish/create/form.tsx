@@ -112,13 +112,13 @@ export function FormCreateDish() {
 
       const response = await fetchCreateFood({
         title,
-        description,
+        ...(!!description && { description }),
+        ...(!!ingredients && { ingredients }),
         category,
         attachmentId,
         price,
-        ingredients,
       });
-
+      console.log(response);
       if (response.success) {
         replace("/");
         refresh();
@@ -153,23 +153,15 @@ export function FormCreateDish() {
   }, [ingredients]);
 
   const onError: SubmitErrorHandler<FormProps> = (errors) => {
-    const keys = Object.values(errors);
-
-    for (const key of keys) {
-      showToast({ type: "error", content: `${key.message}` });
-    }
+    console.error(errors);
   };
-
-  useEffect(() => {
-    console.log(errors);
-  }, [errors]);
 
   return (
     <div className="mb-12 w-full overflow-hidden">
       {preview && (
         <img
           className="mb-8 h-28 w-28 rounded-full object-cover md:h-40 md:w-40 lg:h-28 lg:w-28"
-          src={preview!}
+          src={preview! || "/images/default-image-food.webp"}
           alt={attachmentUrlValue}
         />
       )}
