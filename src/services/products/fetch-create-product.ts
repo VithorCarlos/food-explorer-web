@@ -1,26 +1,26 @@
-import { FOOD_CATEGORIES } from "@/utils/enums/food-categories";
 import { fetchOnServer } from "../http/fetch-on-server";
 import { env } from "@/env";
+import { PRODUCT_CATEGORIES } from "@/utils/enums/product-categories";
 import { REVALIDATE } from "@/utils/enums/revalidate";
 
-interface CreateFoodRequest {
+interface CreateProductRequest {
   title: string;
   description?: string;
-  category: FOOD_CATEGORIES;
+  category: PRODUCT_CATEGORIES;
   price: number;
   attachmentId: string;
   ingredients?: string[];
 }
 
-export const fetchCreateFood = async ({
+export const fetchCreateProduct = async ({
   title,
   description,
   category,
   attachmentId,
   ingredients,
   price,
-}: CreateFoodRequest) => {
-  const url = `${env.NEXT_PUBLIC_API_BASE_URL}/snack`;
+}: CreateProductRequest) => {
+  const url = `${env.NEXT_PUBLIC_API_BASE_URL}/product`;
 
   const response = await fetchOnServer(url, {
     method: "POST",
@@ -45,7 +45,7 @@ export const fetchCreateFood = async ({
       },
       body: JSON.stringify({
         tags: [
-          `${REVALIDATE.FETCH_FIND_ONE_FOOD}`,
+          `${REVALIDATE.FETCH_FIND_ONE_PRODUCT}`,
           `${REVALIDATE.FETCH_ACTIVE_CATEGORIES}`,
         ],
       }),

@@ -12,7 +12,7 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: "Food Explorer",
+  title: "Product Explorer",
   description: "Cardápio Digital",
 };
 

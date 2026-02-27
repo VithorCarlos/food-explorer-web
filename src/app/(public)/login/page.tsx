@@ -51,7 +51,7 @@ export default function Login() {
 
   return (
     <section className="w-full">
-      <h1 className="sr-only">Food Explorer</h1>
+      <h1 className="sr-only">Product Explorer</h1>
       <p className="sr-only">
         Cardápio digital para consumir os melhores petiscos
       </p>

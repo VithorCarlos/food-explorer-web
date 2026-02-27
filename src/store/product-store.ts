@@ -1,13 +1,13 @@
-import { SnackDTO } from "@/dto/snack.dto";
+import { ProductDTO } from "@/dto/product.dto";
 import { fetchAddFavorite } from "@/services/favorites/fetch-add-favorite";
 import { fetchRemoveFavorite } from "@/services/favorites/fetch-delete-favorite";
 import { fetchFindManyFavorite } from "@/services/favorites/fetch-find-many-favorites";
 import { createStore } from "zustand";
 
-export interface FoodState {
-  favorites: SnackDTO[];
+export interface ProductState {
+  favorites: ProductDTO[];
   userId: string;
-  handleFavorites: (food: SnackDTO) => void;
+  handleFavorites: (product: ProductDTO) => void;
   quantities: { [id: string]: number };
   addQuantity: (id: string) => void;
   removeQuantity: (id: string) => void;
@@ -17,10 +17,10 @@ export interface FoodState {
   ) => Promise<{ hasMore: boolean; nextPage: number | null }>;
 }
 
-export type FoodStore = ReturnType<typeof createFoodStore>;
+export type ProductStore = ReturnType<typeof createProductStore>;
 
-export const createFoodStore = (initState: Partial<FoodState>) => {
-  return createStore<FoodState>((set, get) => {
+export const createProductStore = (initState: Partial<ProductState>) => {
+  return createStore<ProductState>((set, get) => {
     function addQuantity(id: string) {
       return set((state) => ({
         quantities: {
@@ -56,10 +56,10 @@ export const createFoodStore = (initState: Partial<FoodState>) => {
         set((state) => {
           if (page === 1) return { favorites: favorites };
 
-          const existingIds = new Set(state.favorites.map((f) => f.snackId));
+          const existingIds = new Set(state.favorites.map((f) => f.productId));
 
           const uniqueNewFavs = favorites.filter(
-            (f: SnackDTO) => !existingIds.has(f.snackId),
+            (f: ProductDTO) => !existingIds.has(f.productId),
           );
 
           return { favorites: [...state.favorites, ...uniqueNewFavs] };
@@ -72,24 +72,24 @@ export const createFoodStore = (initState: Partial<FoodState>) => {
       return { hasMore: false, nextPage: null };
     }
 
-    async function handleFavorites(data: SnackDTO) {
+    async function handleFavorites(data: ProductDTO) {
       const currentState = get();
 
       const favOnState = new Set(
-        currentState.favorites.map((fav) => fav.snackId),
+        currentState.favorites.map((fav) => fav.productId),
       );
 
-      const isFavorited = favOnState.has(data.snackId);
+      const isFavorited = favOnState.has(data.productId);
 
       if (isFavorited) {
         set((state) => ({
           favorites: state.favorites.filter(
-            (favorite) => favorite.snackId !== data.snackId,
+            (favorite) => favorite.productId !== data.productId,
           ),
         }));
 
         const { success } = await fetchRemoveFavorite(
-          data.snackId,
+          data.productId,
           currentState.userId,
         );
         if (!success) {
@@ -101,7 +101,7 @@ export const createFoodStore = (initState: Partial<FoodState>) => {
         }));
 
         const response = await fetchAddFavorite(
-          data.snackId,
+          data.productId,
           currentState.userId,
         );
 
@@ -109,7 +109,7 @@ export const createFoodStore = (initState: Partial<FoodState>) => {
           console.error("Unexpected error on ADD favorites");
           set((state) => ({
             favorites: state.favorites.filter(
-              (favorite) => favorite.snackId !== data.snackId,
+              (favorite) => favorite.productId !== data.productId,
             ),
           }));
         }

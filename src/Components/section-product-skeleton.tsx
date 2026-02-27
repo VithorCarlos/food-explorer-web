@@ -1,7 +1,7 @@
 import { ComponentProps } from "react";
 
 // Esse é o esqueleto de UM único prato (Card)
-export function CardFoodSkeleton() {
+export function CardProductSkeleton() {
   return (
     <div className="relative flex min-w-[320px] shrink-0 flex-col items-center justify-center gap-3 rounded border border-dark_300 bg-dark_200 p-6">
       <div className="shimmer-effect absolute right-4 top-4 h-6 w-6 rounded" />
@@ -24,7 +24,7 @@ export function CardFoodSkeleton() {
 }
 
 // Esse é o esqueleto da Seção inteira
-export function SectionFoodSkeleton({
+export function SectionProductSkeleton({
   className,
   ...props
 }: ComponentProps<"section">) {
@@ -33,10 +33,10 @@ export function SectionFoodSkeleton({
       <div className="shimmer-effect mb-6 h-8 w-48 rounded lg:h-10 lg:w-64" />
 
       <div className="flex w-full flex-nowrap gap-4 overflow-hidden">
-        <CardFoodSkeleton />
-        <CardFoodSkeleton />
-        <CardFoodSkeleton />
-        <CardFoodSkeleton />
+        <CardProductSkeleton />
+        <CardProductSkeleton />
+        <CardProductSkeleton />
+        <CardProductSkeleton />
       </div>
     </section>
   );

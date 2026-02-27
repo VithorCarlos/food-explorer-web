@@ -1,6 +1,6 @@
 import { faker } from "@faker-js/faker";
 
-function createRandomFood() {
+function createRandomProduct() {
   return {
     id: faker.string.uuid(),
     title: faker.commerce.product(),
@@ -10,7 +10,7 @@ function createRandomFood() {
   };
 }
 
-export const foodData = faker.helpers.multiple(createRandomFood, {
+export const productData = faker.helpers.multiple(createRandomProduct, {
   count: 10,
 });
 

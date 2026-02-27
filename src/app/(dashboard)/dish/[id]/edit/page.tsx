@@ -1,6 +1,6 @@
 import { GobackButton } from "@/components/goback-button";
 import { FormEditDish } from "./form";
-import { findOneFood } from "@/services/foods/find-one-food";
+import { findOneProduct } from "@/services/products/find-one-product";
 import { getUserId } from "@/utils/get-user-id";
 
 export interface PageProps {
@@ -10,7 +10,7 @@ export interface PageProps {
 export default async function EditDish(props: PageProps) {
   const params = await props.params;
   const { id } = params;
-  const { snack: food } = await findOneFood(id);
+  const { product: product } = await findOneProduct(id);
 
   return (
     <section className="mx-auto max-w-6xl px-8 lg:px-4">
@@ -18,7 +18,7 @@ export default async function EditDish(props: PageProps) {
 
       <h1 className="my-8 text-3xl font-medium">Editar prato</h1>
 
-      <FormEditDish {...{ food }} />
+      <FormEditDish {...{ product }} />
     </section>
   );
 }

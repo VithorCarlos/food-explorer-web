@@ -8,16 +8,16 @@ import Link from "next/link";
 import { ComponentProps, useEffect, useRef, useState } from "react";
 import { tv } from "tailwind-variants";
 import { Currency } from "./currency";
-import { SnackDTO } from "@/dto/snack.dto";
-import { FOOD_CATEGORIES } from "@/utils/enums/food-categories";
-import { CardFoodSkeleton } from "./section-food-skeleton";
-import { useFoodStore } from "@/providers/food";
-import { fetchSearchFoods } from "@/services/foods/fetch-search-foods";
+import { ProductDTO } from "@/dto/product.dto";
+import { PRODUCT_CATEGORIES } from "@/utils/enums/product-categories";
+import { CardProductSkeleton } from "./section-product-skeleton";
+import { useProductStore } from "@/providers/product-provider";
+import { fetchSearchProducts } from "@/services/products/fetch-search-products";
 
-export interface SectionFoodProps extends ComponentProps<"section"> {
-  initialData: SnackDTO[];
+export interface SectionProductProps extends ComponentProps<"section"> {
+  initialData: ProductDTO[];
   title?: string;
-  category?: FOOD_CATEGORIES;
+  category?: PRODUCT_CATEGORIES;
   isAdmin: boolean;
   searchQuery?: string;
 }
@@ -33,32 +33,32 @@ const heart = tv({
   defaultVariants: { color: "marked" },
 });
 
-export function SectionFood({
+export function SectionProduct({
   title,
   initialData,
   category,
   isAdmin,
   searchQuery,
   ...props
-}: SectionFoodProps) {
+}: SectionProductProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
-  const favorites = useFoodStore((state) => state.favorites);
-  const handleFavorites = useFoodStore((state) => state.handleFavorites);
+  const favorites = useProductStore((state) => state.favorites);
+  const handleFavorites = useProductStore((state) => state.handleFavorites);
 
   const [showLeftButton, setShowLeftButton] = useState(false);
   const [showRightButton, setShowRightButton] = useState(
     initialData.length >= 4,
   );
 
-  const [foods, setFoods] = useState<SnackDTO[]>(initialData);
+  const [products, setProducts] = useState<ProductDTO[]>(initialData);
   const [page, setPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [hasMore, setHasMore] = useState(initialData.length >= 4);
 
-  const favoriteIds = new Set(favorites.map((fav) => fav.snackId));
+  const favoriteIds = new Set(favorites.map((fav) => fav.productId));
 
-  const checkIsFavorite = (snackId: string) => {
-    return favoriteIds.has(snackId);
+  const checkIsFavorite = (productId: string) => {
+    return favoriteIds.has(productId);
   };
 
   const scrollLeft = () => {
@@ -73,23 +73,23 @@ export function SectionFood({
     }
   };
 
-  const loadMoreFoods = async () => {
+  const loadMoreProducts = async () => {
     if (isLoading || !hasMore) return;
     const search = searchQuery || undefined;
     setIsLoading(true);
-    const { snacks, pagination } = await fetchSearchFoods({
+    const { products, pagination } = await fetchSearchProducts({
       category,
       page: String(page),
       title: search,
       ingredients: search ? [search] : undefined,
     });
     setHasMore(pagination.hasMore);
-    setFoods((prev) => {
-      const existingIds = new Set(prev.map((f) => f.snackId));
-      const uniqueNewFoods = snacks.filter(
-        (food: SnackDTO) => !existingIds.has(food.snackId),
+    setProducts((prev) => {
+      const existingIds = new Set(prev.map((f) => f.productId));
+      const uniqueNewProducts = products.filter(
+        (product: ProductDTO) => !existingIds.has(product.productId),
       );
-      return [...prev, ...uniqueNewFoods];
+      return [...prev, ...uniqueNewProducts];
     });
     setPage(pagination.nextPage ?? 1);
     setIsLoading(false);
@@ -108,7 +108,7 @@ export function SectionFood({
 
       if (Math.ceil(scrollLeft + clientWidth) >= scrollWidth - 200) {
         if (hasMore && !isLoading) {
-          loadMoreFoods();
+          loadMoreProducts();
         }
       }
     };
@@ -120,7 +120,7 @@ export function SectionFood({
   }, [isLoading, hasMore, page, category, searchQuery]);
 
   useEffect(() => {
-    setFoods(initialData);
+    setProducts(initialData);
     setPage(2);
     setHasMore(initialData.length >= 4);
   }, [initialData]);
@@ -142,23 +142,23 @@ export function SectionFood({
           ref={scrollRef}
           className="no-scrollbar relative flex w-full flex-nowrap gap-4 overflow-x-auto "
         >
-          {!!foods &&
-            foods.map((food) => {
-              const isFavorited = checkIsFavorite(food.snackId);
+          {!!products &&
+            products.map((product) => {
+              const isFavorited = checkIsFavorite(product.productId);
 
               return (
                 <div
-                  key={food.snackId}
+                  key={product.productId}
                   className="relative flex min-w-[320px] shrink-0 flex-col items-center justify-center gap-3 rounded border border-dark_300 bg-dark_200 p-6"
                 >
                   {isAdmin ? (
-                    <Link href={`/dish/${food.snackId}/edit`}>
+                    <Link href={`/dish/${product.productId}/edit`}>
                       <button className="absolute right-4 top-4 hover:scale-105">
                         <Edit3 className="text-white" />
                       </button>
                     </Link>
                   ) : (
-                    <button onClick={() => handleFavorites(food)}>
+                    <button onClick={() => handleFavorites(product)}>
                       <Heart
                         data-favorited={isFavorited}
                         className={heart({
@@ -170,38 +170,39 @@ export function SectionFood({
 
                   <Link
                     className="h-24 w-24 lg:h-44 lg:w-44"
-                    href={`/${food.snackId}`}
+                    href={`/${product.productId}`}
                   >
                     <img
                       className="h-full w-full rounded-full object-cover"
                       src={
-                        food.attachmentUrl || "/images/default-image-food.webp"
+                        product.attachmentUrl ||
+                        "/images/default-image-product.webp"
                       }
-                      alt={food.title}
+                      alt={product.title}
                     />
                   </Link>
 
-                  <Link href={`/${food.snackId}`}>
+                  <Link href={`/${product.productId}`}>
                     <span className="flex items-center justify-center gap-1 text-xl">
-                      {food.title} <ChevronRight className="w-4" />
+                      {product.title} <ChevronRight className="w-4" />
                     </span>
                   </Link>
 
                   <p className="w-full text-center text-sm text-light_400">
-                    {shortDescription(food.description)}
+                    {shortDescription(product.description)}
                   </p>
 
                   <Currency
-                    id={food.snackId}
-                    price={food?.price!}
+                    id={product.productId}
+                    price={product?.price!}
                     color="cake_200"
                   />
 
                   {!isAdmin && (
                     <>
-                      <ButtonQuantity id={food.snackId} />
+                      <ButtonQuantity id={product.productId} />
                       <Button asChild>
-                        <Link href={`/${food.snackId}`}>Incluir</Link>
+                        <Link href={`/${product.productId}`}>Incluir</Link>
                       </Button>
                     </>
                   )}
@@ -209,7 +210,7 @@ export function SectionFood({
               );
             })}
 
-          {isLoading && <CardFoodSkeleton />}
+          {isLoading && <CardProductSkeleton />}
         </div>
 
         {showRightButton && (

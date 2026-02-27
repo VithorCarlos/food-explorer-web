@@ -1,5 +1,5 @@
 "use client";
-import { useFoodStore } from "@/providers/food";
+import { useProductStore } from "@/providers/product-provider";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
@@ -13,9 +13,9 @@ export default function Favorites() {
 
   const perPage = 12;
 
-  const favorites = useFoodStore((state) => state.favorites);
-  const handleFavorites = useFoodStore((state) => state.handleFavorites);
-  const loadFavorites = useFoodStore((state) => state.loadFavorites);
+  const favorites = useProductStore((state) => state.favorites);
+  const handleFavorites = useProductStore((state) => state.handleFavorites);
+  const loadFavorites = useProductStore((state) => state.loadFavorites);
   const hasFetched = useRef(false);
 
   const handleLoadMore = async () => {
@@ -78,7 +78,7 @@ export default function Favorites() {
           favorites &&
           favorites.map((favorite) => (
             <div
-              key={favorite.snackId}
+              key={favorite.productId}
               className="flex w-full basis-full items-center gap-3 sm:basis-[46%] md:basis-[30%]"
             >
               <img

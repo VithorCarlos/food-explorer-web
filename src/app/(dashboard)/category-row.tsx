@@ -1,10 +1,10 @@
-import { SectionFood } from "@/components/section-food";
-import { fetchSearchFoods } from "@/services/foods/fetch-search-foods";
-import { FOOD_CATEGORIES } from "@/utils/enums/food-categories";
-import { FOOD_CATEGORIES_TRANSLATIONS } from "@/utils/translations/food-categories-translation";
+import { SectionProduct } from "@/components/section-product";
+import { fetchSearchProducts } from "@/services/products/fetch-search-products";
+import { PRODUCT_CATEGORIES } from "@/utils/enums/product-categories";
+import { PRODUCT_CATEGORIES_TRANSLATIONS } from "@/utils/translations/product-categories-translation";
 
 interface CategoryRowProps {
-  category?: FOOD_CATEGORIES;
+  category?: PRODUCT_CATEGORIES;
   isAdmin: boolean;
   searchQuery?: string;
 }
@@ -16,7 +16,7 @@ export async function CategoryRow({
 }: CategoryRowProps) {
   const search = searchQuery || undefined;
 
-  const initialFoods = await fetchSearchFoods({
+  const initialProducts = await fetchSearchProducts({
     ...(category && { category }),
     title: search,
     ingredients: search ? [search] : undefined,
@@ -24,7 +24,7 @@ export async function CategoryRow({
     perPage: "4",
   });
 
-  const totalItems = initialFoods.pagination.total;
+  const totalItems = initialProducts.pagination.total;
 
   const textForItemFound = `(${totalItems}) resultado ${totalItems > 1 ? "encontrados" : "encontrado"} em sua
         busca.`;
@@ -39,11 +39,13 @@ export async function CategoryRow({
         </span>
       )}
 
-      {initialFoods.snacks.length > 0 && (
-        <SectionFood
+      {initialProducts.products.length > 0 && (
+        <SectionProduct
           className="mb-6 px-4"
-          title={category ? FOOD_CATEGORIES_TRANSLATIONS[category] : undefined}
-          initialData={initialFoods.snacks}
+          title={
+            category ? PRODUCT_CATEGORIES_TRANSLATIONS[category] : undefined
+          }
+          initialData={initialProducts.products}
           category={category}
           isAdmin={isAdmin}
           searchQuery={searchQuery}

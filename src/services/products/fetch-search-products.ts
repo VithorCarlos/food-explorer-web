@@ -1,8 +1,8 @@
 import { env } from "@/env";
 import { fetchOnServer } from "../http/fetch-on-server";
-import { SnackDTO } from "@/dto/snack.dto";
+import { ProductDTO } from "@/dto/product.dto";
 
-interface SearchSnacksRequest {
+interface SearchProductsRequest {
   page?: string;
   category?: string;
   perPage?: string;
@@ -10,18 +10,18 @@ interface SearchSnacksRequest {
   ingredients?: string[];
 }
 
-interface SearchSnacksResponse {
-  snacks: SnackDTO[];
+interface SearchProductsResponse {
+  products: ProductDTO[];
   pagination: { total: number; hasMore: boolean; nextPage: number | null };
 }
 
-export const fetchSearchFoods = async ({
+export const fetchSearchProducts = async ({
   page = "1",
   perPage = "4",
   category,
   title,
   ingredients,
-}: SearchSnacksRequest): Promise<SearchSnacksResponse> => {
+}: SearchProductsRequest): Promise<SearchProductsResponse> => {
   const queryParams = new URLSearchParams({
     page,
     perPage,
@@ -35,7 +35,7 @@ export const fetchSearchFoods = async ({
     });
   }
   const queryString = queryParams.toString();
-  const url = `${env.NEXT_PUBLIC_API_BASE_URL}/snack?${queryString}`;
+  const url = `${env.NEXT_PUBLIC_API_BASE_URL}/product?${queryString}`;
 
   const { data, success } = await fetchOnServer(url, {
     method: "GET",
@@ -45,7 +45,7 @@ export const fetchSearchFoods = async ({
   if (!success) {
     env.NEXT_PUBLIC_NODE_ENV === "development" && console.error(data.message);
     return {
-      snacks: [],
+      products: [],
       pagination: {
         hasMore: false,
         nextPage: null,

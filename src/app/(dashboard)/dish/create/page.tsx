@@ -1,6 +1,5 @@
 import { GobackButton } from "@/components/goback-button";
 import { FormCreateDish } from "./form";
-import { getUserId } from "@/utils/get-user-id";
 
 export default async function CreateDish() {
   return (

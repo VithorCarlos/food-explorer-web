@@ -1,6 +1,6 @@
 "use client";
 
-import { useFoodStore } from "@/providers/food";
+import { useProductStore } from "@/providers/product-provider";
 import { formatCurrency } from "@/utils/fomart-curency";
 import { VariantProps, tv } from "tailwind-variants";
 
@@ -24,7 +24,7 @@ interface CurrencyProps extends VariantProps<typeof currency> {
 }
 
 export function Currency({ price, color, id, customText }: CurrencyProps) {
-  const quantities = useFoodStore((state) => state.quantities);
+  const quantities = useProductStore((state) => state.quantities);
   const quantity = quantities[id] || 1;
 
   return (

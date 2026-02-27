@@ -2,8 +2,6 @@
 
 import Button from "@/components/button";
 import { Form } from "@/components/input";
-import { FOOD_CATEGORIES } from "@/utils/enums/food-categories";
-import { FOOD_CATEGORIES_TRANSLATIONS } from "@/utils/translations/food-categories-translation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Plus, Upload, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
@@ -12,7 +10,9 @@ import { SubmitErrorHandler, useForm } from "react-hook-form";
 import { showToast } from "@/utils/toast-message";
 import { useRouter } from "next/navigation";
 import { fetchUploadAttachment } from "@/services/attachment/fetch-upload-attachment";
-import { fetchCreateFood } from "@/services/foods/fetch-create-food";
+import { PRODUCT_CATEGORIES } from "@/utils/enums/product-categories";
+import { fetchCreateProduct } from "@/services/products/fetch-create-product";
+import { PRODUCT_CATEGORIES_TRANSLATIONS } from "@/utils/translations/product-categories-translation";
 
 export function FormCreateDish() {
   const {
@@ -29,7 +29,8 @@ export function FormCreateDish() {
   const inputRef = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [isFetching, setIsFetching] = useState(false);
-  const [selectedFoodCategory, setSelectedFoodCategory] = useState<string>("");
+  const [selectedProductCategory, setSelectedProductCategory] =
+    useState<string>("");
   const [file, setFile] = useState<File | null>(null);
   const attachmentUrlValue = getValues("attachmentUrl");
 
@@ -87,13 +88,13 @@ export function FormCreateDish() {
     }
   };
 
-  const handleSelectFoodCategory = (value: string) => {
-    const newValue = value as FOOD_CATEGORIES;
-    setSelectedFoodCategory(value);
+  const handleSelectProductCategory = (value: string) => {
+    const newValue = value as PRODUCT_CATEGORIES;
+    setSelectedProductCategory(value);
     setValue("category", newValue);
   };
 
-  const createFoodForm = async (data: FormProps) => {
+  const createProductForm = async (data: FormProps) => {
     setIsFetching(true);
     let attachmentId;
 
@@ -110,7 +111,7 @@ export function FormCreateDish() {
         attachmentId = attachmentData.attachmentId;
       }
 
-      const response = await fetchCreateFood({
+      const response = await fetchCreateProduct({
         title,
         ...(!!description && { description }),
         ...(!!ingredients && { ingredients }),
@@ -161,12 +162,12 @@ export function FormCreateDish() {
       {preview && (
         <img
           className="mb-8 h-28 w-28 rounded-full object-cover md:h-40 md:w-40 lg:h-28 lg:w-28"
-          src={preview! || "/images/default-image-food.webp"}
+          src={preview! || "/images/default-image-product.webp"}
           alt={attachmentUrlValue}
         />
       )}
 
-      <form onSubmit={handleSubmit(createFoodForm, onError)}>
+      <form onSubmit={handleSubmit(createProductForm, onError)}>
         <Form.Root className="gap-8">
           <div className="grid gap-8 lg:grid-cols-[250px_minmax(447px,1fr)_minmax(348px,1fr)]">
             <Form.Wrapper className="md:col-start-1">
@@ -213,19 +214,19 @@ export function FormCreateDish() {
               <Form.Viewport className="pl-0">
                 <Form.Select
                   placeholder="Selecione"
-                  selectedValue={selectedFoodCategory}
-                  defaultValue={selectedFoodCategory}
-                  onValueChange={handleSelectFoodCategory}
+                  selectedValue={selectedProductCategory}
+                  defaultValue={selectedProductCategory}
+                  onValueChange={handleSelectProductCategory}
                 >
-                  {Object.values(FOOD_CATEGORIES).map((category, index) => (
+                  {Object.values(PRODUCT_CATEGORIES).map((category, index) => (
                     <Form.SelectItem
                       key={category}
                       value={category}
                       hasSeparator={
-                        Object.values(FOOD_CATEGORIES).length - 1 > index
+                        Object.values(PRODUCT_CATEGORIES).length - 1 > index
                       }
                     >
-                      {FOOD_CATEGORIES_TRANSLATIONS[category]}
+                      {PRODUCT_CATEGORIES_TRANSLATIONS[category]}
                     </Form.SelectItem>
                   ))}
                 </Form.Select>

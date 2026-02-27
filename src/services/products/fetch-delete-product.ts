@@ -2,8 +2,8 @@ import { env } from "@/env";
 import { fetchOnServer } from "../http/fetch-on-server";
 import { REVALIDATE } from "@/utils/enums/revalidate";
 
-export const fetchDeleteFood = async (snackId: string) => {
-  const url = `${env.NEXT_PUBLIC_API_BASE_URL}/snack/${snackId}`;
+export const fetchDeleteProduct = async (productId: string) => {
+  const url = `${env.NEXT_PUBLIC_API_BASE_URL}/product/${productId}`;
 
   const response = await fetchOnServer(url, {
     method: "DELETE",
@@ -17,7 +17,7 @@ export const fetchDeleteFood = async (snackId: string) => {
       },
       body: JSON.stringify({
         tags: [
-          `${REVALIDATE.FETCH_FIND_ONE_FOOD}`,
+          `${REVALIDATE.FETCH_FIND_ONE_PRODUCT}`,
           `${REVALIDATE.FETCH_ACTIVE_CATEGORIES}`,
         ],
       }),

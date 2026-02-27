@@ -2,7 +2,7 @@ import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { getUserRole } from "@/utils/get-user-role";
 import { ROLE } from "@/utils/enums/role";
-import { FoodProvider } from "@/providers/food";
+import { ProductProvider } from "@/providers/product-provider";
 import { fetchFindManyFavorite } from "@/services/favorites/fetch-find-many-favorites";
 import { getUserId } from "@/utils/get-user-id";
 
@@ -22,14 +22,14 @@ export default async function DashboardLayout({
   return (
     <div className="flex min-h-screen flex-col">
       <Header {...{ isAdmin }} />
-      <FoodProvider
+      <ProductProvider
         initialState={{
           favorites: initialFavorites.favorites,
           userId: user!.id,
         }}
       >
         <main className="flex-1">{children}</main>
-      </FoodProvider>
+      </ProductProvider>
 
       <Footer />
     </div>

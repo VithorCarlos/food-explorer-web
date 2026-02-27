@@ -2,9 +2,9 @@
 
 import Button from "@/components/button";
 import { Form } from "@/components/input";
-import { SnackDTO } from "@/dto/snack.dto";
-import { FOOD_CATEGORIES } from "@/utils/enums/food-categories";
-import { FOOD_CATEGORIES_TRANSLATIONS } from "@/utils/translations/food-categories-translation";
+import { ProductDTO } from "@/dto/product.dto";
+import { PRODUCT_CATEGORIES } from "@/utils/enums/product-categories";
+import { PRODUCT_CATEGORIES_TRANSLATIONS } from "@/utils/translations/product-categories-translation";
 import { Plus, Upload, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { SubmitErrorHandler, useForm } from "react-hook-form";
@@ -13,14 +13,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { showToast } from "@/utils/toast-message";
 import { fetchUploadAttachment } from "@/services/attachment/fetch-upload-attachment";
-import { fetchUpdateFood } from "@/services/foods/fetch-update-food";
-import { fetchDeleteFood } from "@/services/foods/fetch-delete-food";
+import { fetchUpdateProduct } from "@/services/products/fetch-update-product";
+import { fetchDeleteProduct } from "@/services/products/fetch-delete-product";
 
 interface Props {
-  food: SnackDTO;
+  product: ProductDTO;
 }
 
-export const FormEditDish: React.FC<Props> = ({ food }) => {
+export const FormEditDish: React.FC<Props> = ({ product }) => {
   const { register, handleSubmit, setValue, getValues } = useForm<FormProps>({
     resolver: zodResolver(schema),
   });
@@ -29,14 +29,15 @@ export const FormEditDish: React.FC<Props> = ({ food }) => {
   const igredientInputRef = useRef<HTMLInputElement>(null);
 
   const [ingredients, setingredients] = useState<string[]>(
-    food.ingredients ?? [],
+    product.ingredients ?? [],
   );
   const [isFetching, setIsFetching] = useState(false);
+  const [isRemoving, setIsRemoving] = useState(false);
 
   const [preview, setPreview] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
-  const [selectedFoodCategory, setSelectedFoodCategory] =
-    useState<FOOD_CATEGORIES>(food.category);
+  const [selectedProductCategory, setSelectedProductCategory] =
+    useState<PRODUCT_CATEGORIES>(product.category);
 
   const attachmentUrlValue = getValues("attachmentUrl");
 
@@ -73,18 +74,18 @@ export const FormEditDish: React.FC<Props> = ({ food }) => {
     }
   };
 
-  const handleSelectFoodCategory = (value: FOOD_CATEGORIES) => {
+  const handleSelectProductCategory = (value: PRODUCT_CATEGORIES) => {
     const newValue = value;
 
-    setSelectedFoodCategory(value);
+    setSelectedProductCategory(value);
     setValue("category", newValue);
   };
 
-  const editFoodForm = async (data: FormProps) => {
+  const editProductForm = async (data: FormProps) => {
     setIsFetching(true);
 
     try {
-      let attachmentId = food.attachmentId ?? undefined;
+      let attachmentId = product.attachmentId ?? undefined;
 
       const { title, description, category, price, ingredients } = data;
 
@@ -97,18 +98,18 @@ export const FormEditDish: React.FC<Props> = ({ food }) => {
 
         attachmentId = attachmentData.attachmentId;
       }
-      const response = await fetchUpdateFood({
+      const response = await fetchUpdateProduct({
         ...(title && { title }),
         ...(description && { description }),
         ...(category && { category }),
         ...(price && { price }),
         attachmentId,
         ...(ingredients?.length && { ingredients }),
-        snackId: food.snackId,
+        productId: product.productId,
       });
 
       if (response.success) {
-        replace(`/${food.snackId}`);
+        replace(`/`);
         refresh();
       }
     } catch (err) {
@@ -137,11 +138,11 @@ export const FormEditDish: React.FC<Props> = ({ food }) => {
   };
 
   const handleDeleteDish = async () => {
-    setIsFetching(true);
+    setIsRemoving(true);
     const isConfirmed = confirm("Tem certeza que deseja remover este prato?");
     try {
       if (isConfirmed) {
-        const response = await fetchDeleteFood(food.snackId);
+        const response = await fetchDeleteProduct(product.productId);
 
         if (response.success) {
           replace("/");
@@ -151,13 +152,13 @@ export const FormEditDish: React.FC<Props> = ({ food }) => {
     } catch (err) {
       console.log(err);
     } finally {
-      setIsFetching(false);
+      setIsRemoving(false);
     }
   };
 
   useEffect(() => {
     if (!attachmentUrlValue) {
-      setValue("attachmentUrl", food.attachmentUrl);
+      setValue("attachmentUrl", product.attachmentUrl);
     }
   }, [getValues("attachmentUrl")]);
 
@@ -168,8 +169,8 @@ export const FormEditDish: React.FC<Props> = ({ food }) => {
   }, [ingredients]);
 
   useEffect(() => {
-    if (food.category) {
-      setValue("category", selectedFoodCategory);
+    if (product.category) {
+      setValue("category", selectedProductCategory);
     }
   });
 
@@ -183,18 +184,17 @@ export const FormEditDish: React.FC<Props> = ({ food }) => {
 
   return (
     <div className="mb-12">
-      {preview ||
-        (food?.attachmentUrl && (
-          <button onClick={() => inputRef.current?.click()}>
-            <img
-              className="mb-8 h-28 w-28 rounded-full object-cover"
-              src={preview || food?.attachmentUrl}
-              alt={`imagem de ${food?.title}`}
-            />
-          </button>
-        ))}
+      {(preview || product?.attachmentUrl) && (
+        <button onClick={() => inputRef.current?.click()}>
+          <img
+            className="mb-8 h-28 w-28 rounded-full object-cover"
+            src={preview || product?.attachmentUrl}
+            alt={`imagem de ${product?.title}`}
+          />
+        </button>
+      )}
 
-      <form onSubmit={handleSubmit(editFoodForm, onError)}>
+      <form onSubmit={handleSubmit(editProductForm, onError)}>
         <Form.Root className="gap-8">
           <div className="grid gap-8 lg:grid-cols-[250px_minmax(447px,1fr)_minmax(348px,1fr)]">
             <Form.Wrapper className="md:col-start-1">
@@ -232,7 +232,7 @@ export const FormEditDish: React.FC<Props> = ({ food }) => {
                   {...register("title")}
                   id="title"
                   placeholder="Ex.: Salada Ceasar"
-                  defaultValue={food.title}
+                  defaultValue={product.title}
                 />
               </Form.Viewport>
             </Form.Wrapper>
@@ -242,19 +242,19 @@ export const FormEditDish: React.FC<Props> = ({ food }) => {
               <Form.Viewport className="pl-0">
                 <Form.Select
                   placeholder="Selecione"
-                  selectedValue={selectedFoodCategory}
-                  defaultValue={selectedFoodCategory}
-                  onValueChange={handleSelectFoodCategory}
+                  selectedValue={selectedProductCategory}
+                  defaultValue={selectedProductCategory}
+                  onValueChange={handleSelectProductCategory}
                 >
-                  {Object.values(FOOD_CATEGORIES).map((category, index) => (
+                  {Object.values(PRODUCT_CATEGORIES).map((category, index) => (
                     <Form.SelectItem
                       key={category}
                       value={category}
                       hasSeparator={
-                        Object.values(FOOD_CATEGORIES).length - 1 > index
+                        Object.values(PRODUCT_CATEGORIES).length - 1 > index
                       }
                     >
-                      {FOOD_CATEGORIES_TRANSLATIONS[category]}
+                      {PRODUCT_CATEGORIES_TRANSLATIONS[category]}
                     </Form.SelectItem>
                   ))}
                 </Form.Select>
@@ -313,7 +313,7 @@ export const FormEditDish: React.FC<Props> = ({ food }) => {
                   id="price"
                   type="number"
                   placeholder="R$ 00,00"
-                  defaultValue={food.price}
+                  defaultValue={product.price}
                 />
               </Form.Viewport>
             </Form.Wrapper>
@@ -325,7 +325,7 @@ export const FormEditDish: React.FC<Props> = ({ food }) => {
               <Form.TextInput
                 {...register("description")}
                 placeholder="Fale brevemente sobre o prato, seus ingredientes e composição"
-                defaultValue={food.description}
+                defaultValue={product.description}
               />
             </Form.Viewport>
           </Form.Wrapper>
@@ -334,8 +334,8 @@ export const FormEditDish: React.FC<Props> = ({ food }) => {
             <Button
               className="w-max self-end bg-dark_950 px-4 hover:bg-dark_900"
               onClick={handleDeleteDish}
-              isLoading={isFetching}
-              disabled={isFetching}
+              isLoading={isRemoving}
+              disabled={isFetching || isRemoving}
             >
               Excluir prato
             </Button>
@@ -344,7 +344,7 @@ export const FormEditDish: React.FC<Props> = ({ food }) => {
               type="submit"
               className="w-max self-end bg-tomato_400 px-4 "
               isLoading={isFetching}
-              disabled={isFetching}
+              disabled={isFetching || isRemoving}
             >
               Salvar alterações
             </Button>

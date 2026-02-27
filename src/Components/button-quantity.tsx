@@ -1,6 +1,6 @@
 "use client";
 
-import { useFoodStore } from "@/providers/food";
+import { useProductStore } from "@/providers/product-provider";
 import { Minus, Plus } from "lucide-react";
 
 export interface ButtonQuantityProps {
@@ -8,9 +8,9 @@ export interface ButtonQuantityProps {
 }
 
 export function ButtonQuantity({ id }: ButtonQuantityProps) {
-  const quantities = useFoodStore((state) => state.quantities);
-  const addQuantity = useFoodStore((state) => state.addQuantity);
-  const removeQuantity = useFoodStore((state) => state.removeQuantity);
+  const quantities = useProductStore((state) => state.quantities);
+  const addQuantity = useProductStore((state) => state.addQuantity);
+  const removeQuantity = useProductStore((state) => state.removeQuantity);
 
   const quantity = quantities[id] || 1;
 

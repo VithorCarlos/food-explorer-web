@@ -1,10 +1,10 @@
 import { Suspense } from "react";
-import { FOOD_CATEGORIES } from "@/utils/enums/food-categories";
 import { getUserRole } from "@/utils/get-user-role";
 import { ROLE } from "@/utils/enums/role";
 import { CategoryRow } from "./category-row";
-import { SectionFoodSkeleton } from "@/components/section-food-skeleton";
-import { fetchActiveCategories } from "@/services/foods/fetch-active-categories";
+import { PRODUCT_CATEGORIES } from "@/utils/enums/product-categories";
+import { fetchActiveProductCategories } from "@/services/products/fetch-active-product-categories";
+import { SectionProductSkeleton } from "@/components/section-product-skeleton";
 
 interface DashboardProps {
   searchParams: Promise<{
@@ -18,14 +18,14 @@ export default async function Dashboard({ searchParams }: DashboardProps) {
   const searchQuery = params.search ?? "";
 
   const [categoriesResponse, userRole] = await Promise.all([
-    fetchActiveCategories(),
+    fetchActiveProductCategories(),
     getUserRole(),
   ]);
 
   const categories = categoriesResponse.categories || [];
   const sortedCategories = categories.sort((a, b) => {
-    const indexA = Object.keys(FOOD_CATEGORIES).indexOf(a);
-    const indexB = Object.keys(FOOD_CATEGORIES).indexOf(b);
+    const indexA = Object.keys(PRODUCT_CATEGORIES).indexOf(a);
+    const indexB = Object.keys(PRODUCT_CATEGORIES).indexOf(b);
 
     if (indexA === -1) return 1;
     if (indexB === -1) return -1;
@@ -54,12 +54,12 @@ export default async function Dashboard({ searchParams }: DashboardProps) {
       </div>
 
       {searchQuery ? (
-        <Suspense fallback={<SectionFoodSkeleton />}>
+        <Suspense fallback={<SectionProductSkeleton />}>
           <CategoryRow isAdmin={isAdmin} searchQuery={searchQuery} />
         </Suspense>
       ) : (
         sortedCategories.map((category) => (
-          <Suspense key={category} fallback={<SectionFoodSkeleton />}>
+          <Suspense key={category} fallback={<SectionProductSkeleton />}>
             <CategoryRow category={category} isAdmin={isAdmin} />
           </Suspense>
         ))

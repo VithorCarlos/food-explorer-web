@@ -1,11 +1,11 @@
-import { FOOD_CATEGORIES } from "@/utils/enums/food-categories";
+import { PRODUCT_CATEGORIES } from "@/utils/enums/product-categories";
 
-export interface SnackDTO {
-  snackId: string;
+export interface ProductDTO {
+  productId: string;
   title: string;
   attachmentUrl?: string;
   attachmentId?: string;
-  category: FOOD_CATEGORIES;
+  category: PRODUCT_CATEGORIES;
   ingredients?: string[];
   userId: string;
   price: number;
