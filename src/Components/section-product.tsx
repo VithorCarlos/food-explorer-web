@@ -124,7 +124,6 @@ export function SectionProduct({
     setPage(2);
     setHasMore(initialData.length >= 4);
   }, [initialData]);
-
   return (
     <section {...props}>
       <h2 className="mb-6 text-lg font-medium lg:text-3xl">{title}</h2>
@@ -152,7 +151,7 @@ export function SectionProduct({
                   className="relative flex min-w-[320px] shrink-0 flex-col items-center justify-center gap-3 rounded border border-dark_300 bg-dark_200 p-6"
                 >
                   {isAdmin ? (
-                    <Link href={`/dish/${product.productId}/edit`}>
+                    <Link href={`/product/${product.productId}/edit`}>
                       <button className="absolute right-4 top-4 hover:scale-105">
                         <Edit3 className="text-white" />
                       </button>
@@ -176,7 +175,7 @@ export function SectionProduct({
                       className="h-full w-full rounded-full object-cover"
                       src={
                         product.attachmentUrl ||
-                        "/images/default-image-product.webp"
+                        "/images/default-image-food.webp"
                       }
                       alt={product.title}
                     />

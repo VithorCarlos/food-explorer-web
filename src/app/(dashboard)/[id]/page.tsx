@@ -32,7 +32,7 @@ export default async function Preview(props: PageProps) {
         <div className="h-72 w-72 overflow-hidden rounded-full lg:h-96 lg:w-96">
           <img
             className="h-full w-full object-cover"
-            src={product?.attachmentUrl || "/images/default-image-product.webp"}
+            src={product?.attachmentUrl || "/images/default-image-food.webp"}
             alt={product?.title}
           />
         </div>
@@ -47,7 +47,7 @@ export default async function Preview(props: PageProps) {
           <div className="mt-8 flex items-center gap-3 lg:justify-start">
             {!isAdmin && <ButtonQuantity id={id} />}
 
-            <Link href={isAdmin ? `/dish/${id}/edit` : "#"}>
+            <Link href={isAdmin ? `/product/${id}/edit` : "#"}>
               <Button className="w-max px-8">
                 {isAdmin ? (
                   <span>Editar prato</span>

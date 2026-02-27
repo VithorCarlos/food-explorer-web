@@ -56,7 +56,7 @@ export function Desktop({ isAdmin }: DesktopProps) {
             <span className="text-sm">(0)</span>
           </button>
         ) : (
-          <Link href="/dish/create">
+          <Link href="/product/create">
             <button className="flex h-14 w-56 items-center justify-center gap-2 rounded-md bg-tomato_100 px-8 py-6">
               <span className="text-sm">Novo prato</span>
             </button>
