@@ -25,7 +25,7 @@ export const fetchCreateUser = async ({
   });
 
   const data = await response.json();
-  console.log(response);
+
   if (!response.ok) {
     throw new RequestErrorApi(data.message, response.status);
   }

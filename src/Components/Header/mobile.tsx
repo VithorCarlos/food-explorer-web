@@ -1,6 +1,6 @@
 import * as Collapsible from "@radix-ui/react-collapsible";
 import { Menu, Search, X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ExplorerLogo } from "../explorer-logo";
 import { IconReceipt } from "@/components/header/icon-receipt";
 import { Form } from "@/components/input";
@@ -13,14 +13,8 @@ interface MobileProps {
 export function Mobile({ isAdmin }: MobileProps) {
   const [menuIsOpen, setMenuIsOpen] = useState(false);
 
-  function handleToggle() {
-    if (menuIsOpen) {
-      setMenuIsOpen(false);
-      document.body.classList.remove("scroll-none");
-    } else {
-      setMenuIsOpen(true);
-      document.body.classList.add("scroll-none");
-    }
+  function handleOpenChange(open: boolean) {
+    setMenuIsOpen(open);
   }
 
   const handleLogout = async () => {
@@ -31,18 +25,27 @@ export function Mobile({ isAdmin }: MobileProps) {
     window.location.href = "/";
   };
 
+  useEffect(() => {
+    if (menuIsOpen) {
+      document.body.classList.add("overflow-hidden");
+    } else {
+      document.body.classList.remove("overflow-hidden");
+    }
+
+    return () => {
+      document.body.classList.remove("overflow-hidden");
+    };
+  }, [menuIsOpen]);
+
   return (
     <Collapsible.Root
       open={menuIsOpen}
-      onOpenChange={handleToggle}
+      onOpenChange={handleOpenChange}
       className="lg:hidden"
     >
       <div className="flex h-[7.125rem] items-center justify-between overflow-hidden bg-dark_700 px-7">
         <Collapsible.Trigger asChild>
-          <button
-            onClick={handleToggle}
-            className="p-2 shadow-none data-[state=open]:rounded-md data-[state=open]:bg-dark_900"
-          >
+          <button className="p-2 shadow-none data-[state=open]:rounded-md data-[state=open]:bg-dark_900">
             {menuIsOpen ? (
               <X className="h-6 w-6" />
             ) : (
@@ -76,8 +79,8 @@ export function Mobile({ isAdmin }: MobileProps) {
           {!isAdmin && (
             <Link
               href="/favorites"
-              onClick={() => setMenuIsOpen(false)}
               className="min-w-max border-b-2 border-dark_950 pb-2"
+              onClick={() => setMenuIsOpen(false)}
             >
               <span className="text-2xl">Meus favoritos</span>
             </Link>

@@ -19,7 +19,7 @@ export function Desktop({ isAdmin }: DesktopProps) {
 
   return (
     <div className="hidden bg-dark_700 lg:block">
-      <div className="mx-auto flex h-28 max-w-7xl items-center justify-between gap-8 overflow-hidden  px-7">
+      <div className="mx-auto flex h-28 max-w-7xl items-center justify-between gap-8 px-7">
         <Link href="/" className="flex flex-col items-center">
           <ExplorerLogo className="w-max text-xl" />
           {isAdmin && (

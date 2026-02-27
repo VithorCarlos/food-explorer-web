@@ -12,6 +12,7 @@ import { fetchUpdateUser } from "@/services/user/fetch-update-user";
 import { UserDTO } from "@/dto/user.dto";
 import { useRouter } from "next/navigation";
 import { USER_ERRORS_TRANSLATE } from "@/utils/translations/user-errors-translate";
+import { fetchDeleteUser } from "@/services/user/fetch-delete-user";
 
 interface Props {
   user: Partial<UserDTO>;
@@ -20,7 +21,8 @@ interface Props {
 export function FormUpdateAccount({ user }: Props) {
   const [showPassword, setShowPassword] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
-  const { refresh } = useRouter();
+  const [isRemoving, setIsRemoving] = useState(false);
+  const { refresh, replace } = useRouter();
 
   const {
     register,
@@ -73,6 +75,42 @@ export function FormUpdateAccount({ user }: Props) {
       }
     } finally {
       setIsFetching(false);
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    const isConfirmed = confirm(
+      "Tem certeza que deseja remover a conta? Tudo será perdido e não será possível recuperar!",
+    );
+
+    if (isConfirmed && user.id) {
+      setIsRemoving(true);
+
+      try {
+        const [response] = await Promise.all([
+          fetchDeleteUser(),
+          fetch(`/api/logout`, {
+            method: "POST",
+          }),
+        ]);
+
+        if (response.success) {
+          replace("/login");
+          return showToast({
+            type: "success",
+            content: "Conta removida com sucesso!",
+          });
+        }
+      } catch (err) {
+        if (err instanceof RequestErrorApi) {
+          return showToast({
+            type: "error",
+            content: USER_ERRORS_TRANSLATE[err.message],
+          });
+        }
+      } finally {
+        setIsRemoving(false);
+      }
     }
   };
 
@@ -165,6 +203,16 @@ export function FormUpdateAccount({ user }: Props) {
           Atualizar Informações
         </Button>
       </form>
+
+      {isRemoving ? (
+        <div className="flex items-center justify-center">
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-300 border-t-red-500"></div>
+        </div>
+      ) : (
+        <button className="text-sm text-red-500" onClick={handleDeleteAccount}>
+          <span>Solicitar exclusão de conta</span>
+        </button>
+      )}
     </div>
   );
 }
