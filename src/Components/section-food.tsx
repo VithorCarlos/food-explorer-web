@@ -119,6 +119,12 @@ export function SectionFood({
     return () => el.removeEventListener("scroll", handleScroll);
   }, [isLoading, hasMore, page, category, searchQuery]);
 
+  useEffect(() => {
+    setFoods(initialData);
+    setPage(2);
+    setHasMore(initialData.length >= 4);
+  }, [initialData]);
+
   return (
     <section {...props}>
       <h2 className="mb-6 text-lg font-medium lg:text-3xl">{title}</h2>

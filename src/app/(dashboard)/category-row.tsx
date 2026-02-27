@@ -24,17 +24,31 @@ export async function CategoryRow({
     perPage: "4",
   });
 
-  if (!initialFoods || initialFoods.snacks.length === 0) {
-    return null;
-  }
+  const totalItems = initialFoods.pagination.total;
+
+  const textForItemFound = `(${totalItems}) resultado ${totalItems > 1 ? "encontrados" : "encontrado"} em sua
+        busca.`;
+
+  const textForItemNotFound = "Nenhum resultado foi encontrado para sua busca.";
 
   return (
-    <SectionFood
-      className="mb-6 px-4"
-      title={category ? FOOD_CATEGORIES_TRANSLATIONS[category] : undefined}
-      initialData={initialFoods.snacks}
-      category={category}
-      isAdmin={isAdmin}
-    />
+    <div>
+      {searchQuery && (
+        <span className="text-xl font-bold">
+          {totalItems !== 0 ? textForItemFound : textForItemNotFound}
+        </span>
+      )}
+
+      {initialFoods.snacks.length > 0 && (
+        <SectionFood
+          className="mb-6 px-4"
+          title={category ? FOOD_CATEGORIES_TRANSLATIONS[category] : undefined}
+          initialData={initialFoods.snacks}
+          category={category}
+          isAdmin={isAdmin}
+          searchQuery={searchQuery}
+        />
+      )}
+    </div>
   );
 }
