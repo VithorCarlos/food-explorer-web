@@ -33,14 +33,16 @@ export default function register() {
     const { name, email, password } = data;
 
     try {
-      await fetchCreateUser({ name, email, password });
-      reset();
-      replace("/login");
+      const response = await fetchCreateUser({ name, email, password });
 
-      return showToast({
-        type: "success",
-        content: "Conta criada com sucesso! Faça o login...",
-      });
+      if (response.ok) {
+        replace("/login");
+        reset();
+        return showToast({
+          type: "success",
+          content: "Conta criada com sucesso! Faça o login...",
+        });
+      }
     } catch (err) {
       if (err instanceof RequestErrorApi) {
         return showToast({

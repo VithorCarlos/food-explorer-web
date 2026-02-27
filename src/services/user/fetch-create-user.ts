@@ -16,6 +16,7 @@ export const fetchCreateUser = async ({
 
   const response = await fetch(url, {
     method: "POST",
+    credentials: "include",
     headers: {
       accept: "application/json",
       "Content-Type": "application/json",
@@ -24,7 +25,7 @@ export const fetchCreateUser = async ({
   });
 
   const data = await response.json();
-
+  console.log(response);
   if (!response.ok) {
     throw new RequestErrorApi(data.message, response.status);
   }
