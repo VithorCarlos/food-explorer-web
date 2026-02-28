@@ -42,7 +42,7 @@ export function SectionProduct({
   ...props
 }: SectionProductProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
-  const favorites = useProductStore((state) => state.favorites);
+
   const handleFavorites = useProductStore((state) => state.handleFavorites);
 
   const [showLeftButton, setShowLeftButton] = useState(false);
@@ -55,10 +55,26 @@ export function SectionProduct({
   const [isLoading, setIsLoading] = useState(false);
   const [hasMore, setHasMore] = useState(initialData.length >= 4);
 
-  const favoriteIds = new Set(favorites.map((fav) => fav.productId));
+  const toggleFavoriteLocally = async (product: ProductDTO) => {
+    setProducts((prev) =>
+      prev.map((p) =>
+        p.productId === product.productId
+          ? { ...p, isFavorited: !p.isFavorited }
+          : p,
+      ),
+    );
 
-  const checkIsFavorite = (productId: string) => {
-    return favoriteIds.has(productId);
+    const success = await handleFavorites(product);
+
+    if (!success) {
+      setProducts((prev) =>
+        prev.map((p) =>
+          p.productId === product.productId
+            ? { ...p, isFavorited: product.isFavorited }
+            : p,
+        ),
+      );
+    }
   };
 
   const scrollLeft = () => {
@@ -143,7 +159,7 @@ export function SectionProduct({
         >
           {!!products &&
             products.map((product) => {
-              const isFavorited = checkIsFavorite(product.productId);
+              const isFavorited = !!product.isFavorited;
 
               return (
                 <div
@@ -157,7 +173,7 @@ export function SectionProduct({
                       </button>
                     </Link>
                   ) : (
-                    <button onClick={() => handleFavorites(product)}>
+                    <button onClick={() => toggleFavoriteLocally(product)}>
                       <Heart
                         data-favorited={isFavorited}
                         className={heart({

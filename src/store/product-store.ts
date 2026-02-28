@@ -1,3 +1,4 @@
+import { FavoriteDTO } from "@/dto/favorite.dto";
 import { ProductDTO } from "@/dto/product.dto";
 import { fetchAddFavorite } from "@/services/favorites/fetch-add-favorite";
 import { fetchRemoveFavorite } from "@/services/favorites/fetch-delete-favorite";
@@ -7,7 +8,7 @@ import { createStore } from "zustand";
 export interface ProductState {
   favorites: ProductDTO[];
   userId: string;
-  handleFavorites: (product: ProductDTO) => void;
+  handleFavorites: (product: ProductDTO) => Promise<boolean>;
   quantities: { [id: string]: number };
   addQuantity: (id: string) => void;
   removeQuantity: (id: string) => void;
@@ -53,13 +54,22 @@ export const createProductStore = (initState: Partial<ProductState>) => {
         currentState.userId,
       );
       if (success && favorites) {
+        const formattedFavorites: ProductDTO[] = favorites.map(
+          (fav: FavoriteDTO) => ({
+            ...fav,
+            isFavorited: true,
+          }),
+        );
+
         set((state) => {
-          if (page === 1) return { favorites: favorites };
+          if (page === 1) return { favorites: formattedFavorites };
 
-          const existingIds = new Set(state.favorites.map((f) => f.productId));
+          const existingIds = new Set(
+            state.favorites.map((f: ProductDTO) => f.productId),
+          );
 
-          const uniqueNewFavs = favorites.filter(
-            (f: ProductDTO) => !existingIds.has(f.productId),
+          const uniqueNewFavs = formattedFavorites.filter(
+            (f) => !existingIds.has(f.productId),
           );
 
           return { favorites: [...state.favorites, ...uniqueNewFavs] };
@@ -75,11 +85,9 @@ export const createProductStore = (initState: Partial<ProductState>) => {
     async function handleFavorites(data: ProductDTO) {
       const currentState = get();
 
-      const favOnState = new Set(
-        currentState.favorites.map((fav) => fav.productId),
-      );
-
-      const isFavorited = favOnState.has(data.productId);
+      const isFavorited =
+        data.isFavorited ??
+        currentState.favorites.some((fav) => fav.productId === data.productId);
 
       if (isFavorited) {
         set((state) => ({
@@ -94,10 +102,14 @@ export const createProductStore = (initState: Partial<ProductState>) => {
         );
         if (!success) {
           set((state) => ({ favorites: [data, ...state.favorites] }));
+          return false;
         }
+        return true;
       } else {
+        const productToAdd = { ...data, isFavorited: true };
+
         set((state) => ({
-          favorites: [data, ...state.favorites],
+          favorites: [productToAdd, ...state.favorites],
         }));
 
         const response = await fetchAddFavorite(
@@ -112,7 +124,9 @@ export const createProductStore = (initState: Partial<ProductState>) => {
               (favorite) => favorite.productId !== data.productId,
             ),
           }));
+          return false;
         }
+        return true;
       }
     }
 

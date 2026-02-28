@@ -29,7 +29,7 @@ export const FormEditProduct: React.FC<Props> = ({ product }) => {
   const igredientInputRef = useRef<HTMLInputElement>(null);
 
   const [ingredients, setingredients] = useState<string[]>(
-    product.ingredients ?? [],
+    product?.ingredients ?? [],
   );
   const [isFetching, setIsFetching] = useState(false);
   const [isRemoving, setIsRemoving] = useState(false);

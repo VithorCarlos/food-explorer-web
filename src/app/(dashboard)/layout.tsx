@@ -3,7 +3,6 @@ import { Footer } from "@/components/footer";
 import { getUserRole } from "@/utils/get-user-role";
 import { ROLE } from "@/utils/enums/role";
 import { ProductProvider } from "@/providers/product-provider";
-import { fetchFindManyFavorite } from "@/services/favorites/fetch-find-many-favorites";
 import { getUserId } from "@/utils/get-user-id";
 
 export default async function DashboardLayout({
@@ -13,10 +12,8 @@ export default async function DashboardLayout({
 }>) {
   const user = await getUserId();
 
-  const [userRole, initialFavorites] = await Promise.all([
-    getUserRole(),
-    fetchFindManyFavorite("1", "50", user!.id),
-  ]);
+  const userRole = await getUserRole();
+
   const isAdmin = userRole?.role === ROLE.ADMIN;
 
   return (
@@ -24,7 +21,6 @@ export default async function DashboardLayout({
       <Header {...{ isAdmin }} />
       <ProductProvider
         initialState={{
-          favorites: initialFavorites.favorites,
           userId: user!.id,
         }}
       >

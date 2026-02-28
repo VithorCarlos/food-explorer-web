@@ -33,16 +33,13 @@ export default function register() {
     const { name, email, password } = data;
 
     try {
-      const response = await fetchCreateUser({ name, email, password });
-
-      if (response.ok) {
-        replace("/login");
-        reset();
-        return showToast({
-          type: "success",
-          content: "Conta criada com sucesso! Faça o login...",
-        });
-      }
+      await fetchCreateUser({ name, email, password });
+      replace("/login");
+      reset();
+      return showToast({
+        type: "success",
+        content: "Conta criada com sucesso! Faça o login...",
+      });
     } catch (err) {
       if (err instanceof RequestErrorApi) {
         return showToast({
@@ -57,7 +54,7 @@ export default function register() {
 
   return (
     <section className="w-full">
-      <h2 className="sr-only">Crie sua conta no Product Explorer</h2>
+      <h2 className="sr-only">Crie sua conta no Food Explorer</h2>
       <p className="sr-only">Crie sua conta em nosso Cardápio digital</p>
 
       <div className="mx-auto flex h-screen max-w-6xl flex-col items-center justify-center gap-[4.375rem] lg:flex-row lg:gap-36  lg:px-8 xl:gap-72">

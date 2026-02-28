@@ -1,5 +1,7 @@
 "use client";
 import { useProductStore } from "@/providers/product-provider";
+import { formatCurrency } from "@/utils/fomart-curency";
+import { PRODUCT_CATEGORIES_TRANSLATIONS } from "@/utils/translations/product-categories-translation";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
@@ -83,13 +85,25 @@ export default function Favorites() {
             >
               <img
                 className="h-20 w-20 rounded-full object-cover"
-                src={favorite.attachmentUrl}
+                src={
+                  favorite.attachmentUrl || "/images/default-image-food.webp"
+                }
                 alt={`Imagem ${favorite.title}`}
               />
+
               <div className="flex w-max flex-col items-start justify-start gap-1">
                 <span className="text-xl font-medium">{favorite.title}</span>
+                <div className="flex flex-col">
+                  <span className="text-xs text-light_400">
+                    {PRODUCT_CATEGORIES_TRANSLATIONS[favorite.category]}
+                  </span>
+
+                  <span className="text-xs text-cake_200">
+                    {formatCurrency(favorite.price)}
+                  </span>
+                </div>
                 <button
-                  className="text-start text-xs text-tomato_400"
+                  className="text-start text-xs font-bold text-tomato_400 hover:text-tomato_300"
                   onClick={() => handleFavorites(favorite)}
                 >
                   Remover dos favoritos

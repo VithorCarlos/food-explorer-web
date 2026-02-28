@@ -8,6 +8,7 @@ export interface ProductDTO {
   category: PRODUCT_CATEGORIES;
   ingredients?: string[];
   userId: string;
+  isFavorited: boolean;
   price: number;
   description: string;
   createdAt?: Date;
